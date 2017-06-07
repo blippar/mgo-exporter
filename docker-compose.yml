@@ -1,0 +1,59 @@
+version: '2'
+
+services:
+  primary:
+    image: mongo:3.0
+    hostname: primary
+    command:
+    - mongod
+    - --replSet
+    - mgoExporterSet
+    volumes:
+    - $PWD/compose/data/primary:/data
+    ports:
+    - "30001:27017"
+
+  fallback:
+    image: mongo:3.0
+    hostname: fallback
+    command:
+    - mongod
+    - --replSet
+    - mgoExporterSet
+    volumes:
+    - $PWD/compose/data/secondary:/data
+    ports:
+    - "30002:27017"
+
+  secondary:
+    image: mongo:3.0
+    hostname: secondary
+    command:
+    - mongod
+    - --replSet
+    - mgoExporterSet
+    volumes:
+    - $PWD/compose/data/fallback:/data
+    ports:
+    - "30003:27017"
+
+  solo:
+    image: mongo:3.0
+    hostname: solo
+    command:
+    - mongod
+    volumes:
+    - $PWD/compose/data/solo:/data
+    ports:
+    - "30000:27017"
+
+  logstash:
+    image:  logstash:5.4
+    command:
+    - logstash
+    - -f
+    - /conf/logstash.conf
+    volumes:
+    - $PWD/compose/config:/conf
+    ports:
+    - "2000:2000"
