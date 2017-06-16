@@ -21,12 +21,11 @@ const (
 func main() {
 
 	var args struct {
-		Host     string   `arg:"positional"`
-		Port     int      `arg:"positional"`
-		Database []string `arg:"-d,separate"`
-		Logstash string   `arg:"-l"`
-		Repl     string   `arg:"-r,help:Monitor Replica Set"`
-		Verbose  bool     `arg:"-v"`
+		MongoDB  string   `arg:"positional,help:Mongo URI for the node to connect to"`
+		Database []string `arg:"-d,separate,help:database name to monitor"`
+		Repl     string   `arg:"-r,help:replicaSet name to monitor"`
+		Logstash string   `arg:"-l,help:Logstash URI to send messages to"`
+		Verbose  bool     `arg:"-v,help:enable a more verbose logging"`
 	}
 	args.Logstash = defaultLogstashHost
 	arg.MustParse(&args)
@@ -45,7 +44,7 @@ func main() {
 	}
 
 	// Init MongoDB Connection
-	exporter, err := exporter.NewMongoStatsExporter(args.Host, args.Port, args.Database, args.Repl, forwarder, 10*time.Second)
+	exporter, err := exporter.NewMongoStatsExporter(args.MongoDB, args.Database, args.Repl, forwarder, 10*time.Second)
 	if err != nil {
 		log.WithError(err).Fatal("initMongoStatsExporterError")
 	}

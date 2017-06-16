@@ -16,15 +16,15 @@ type Message struct {
 	NodeReplInfo *ReplicaSetInfo     `json:"nodeReplInfo,omitempty"`
 }
 
+// ServerInfo ...
 type ServerInfo struct {
 	Host       string `json:"host"`
-	IP         string `json:"ip"`
-	Port       int    `json:"port"`
 	ReplicaSet string `json:"replSet,omitempty"`
 	Connected  bool   `json:"connected"`
 	Error      string `json:"error,omitempty"`
 }
 
+// ReplicaSetInfo ...
 type ReplicaSetInfo struct {
 	Set           string        `json:"set"`
 	Name          string        `json:"name"`

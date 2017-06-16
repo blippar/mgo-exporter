@@ -1,7 +1,6 @@
 package exporter
 
 import (
-	"fmt"
 	"time"
 
 	log "github.com/apex/log"
@@ -9,10 +8,6 @@ import (
 
 	"github.com/blippar/mgo-exporter/logstash"
 	"github.com/blippar/mgo-exporter/mongo"
-)
-
-const (
-	mongoProto = "mongodb"
 )
 
 // MongoStatsExporter ...
@@ -27,14 +22,10 @@ type MongoStatsExporter struct {
 	logFields log.Fields
 }
 
-// Add full uri somewhere to use as key for visualisation
-// lie having host then ip port
-
 // NewMongoStatsExporter ...
-func NewMongoStatsExporter(host string, port int, databases []string, repl string, fwd *logstash.TCPForwarder, every time.Duration) (*MongoStatsExporter, error) {
+func NewMongoStatsExporter(connURI string, databases []string, repl string, fwd *logstash.TCPForwarder, every time.Duration) (*MongoStatsExporter, error) {
 
 	// Set MongoDB driver configuration
-	connURI := fmt.Sprintf("%s:%d", host, port)
 	dialInfo, err := mgo.ParseURL(connURI)
 	if err != nil {
 		return nil, err
@@ -56,7 +47,7 @@ func NewMongoStatsExporter(host string, port int, databases []string, repl strin
 
 	// Default LogFields
 	logFields := log.Fields{
-		"host": connURI,
+		"host": dialInfo.Addrs[0],
 	}
 	if repl != "" {
 		logFields["repl"] = repl
@@ -66,9 +57,7 @@ func NewMongoStatsExporter(host string, port int, databases []string, repl strin
 	return &MongoStatsExporter{
 		session: session,
 		info: ServerInfo{
-			Host:       connURI,
-			IP:         host,
-			Port:       port,
+			Host:       dialInfo.Addrs[0],
 			ReplicaSet: repl,
 		},
 		databases: databases,
