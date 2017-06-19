@@ -1,6 +1,7 @@
 # Default config
-GOBIN     := $(shell which go)
+GOBIN	  := $(shell which go)
 VERBOSE   ?= false
+GOENV	  ?=
 
 # If run as 'make VERBOSE=true', it will pass th '-v' option to GOBIN
 ifeq ($(VERBOSE),true)
@@ -27,7 +28,17 @@ _check_gobin:
 # Build binaries with GOBIN using target name & PKGDIR
 $(TARGETS): _check_gobin
 	$(info >>> Building $@ from $(PKGDIR) using $(GOBIN))
-	@$(GOBIN) build $(GOOPT) -o $@ $(PKGDIR)
+	$(if $(GOENV),$(info >>> with $(GOENV) and GOOPT=$(GOOPT)),)
+ifeq ($(VERBOSE),true)
+	$(GOENV) $(GOBIN) build $(GOOPT) -o $@ $(PKGDIR)
+else
+	@$(GOENV) $(GOBIN) build $(GOOPT) -o $@ $(PKGDIR)
+endif
+
+# Build binaries staticly
+static: GOOPT += -ldflags '-extldflags "-static"'
+static: GOENV += CGO_ENABLED=0 GOOS=linux
+static: $(TARGETS)
 
 # Run tests using GOBIN
 test: _check_gobin
@@ -36,6 +47,5 @@ test: _check_gobin
 
 # Always execute these targets
 .PHONY: all $(TARGETS)
-.PHONY: exporter
-.PHONY: test
+.PHONY: exporter static test
 .PHONY: _check_gobin
