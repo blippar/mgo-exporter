@@ -3,8 +3,6 @@ package logstash
 import (
 	"encoding/json"
 	"net"
-
-	"github.com/apex/log"
 )
 
 // TCPForwarder ...
@@ -34,7 +32,7 @@ func (f *TCPForwarder) Send(m interface{}) error {
 	if js, err = json.Marshal(m); err != nil {
 		return err
 	}
-	log.WithField("msg", string(js)).Debug("sendMessage")
+	// log.WithField("msg", string(js)).Debug("sendMessage")
 
 	// To work with tls and tcp transports via json_lines codec
 	js = append(js, byte('\n'))

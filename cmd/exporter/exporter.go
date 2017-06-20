@@ -12,7 +12,9 @@ import (
 	"github.com/apex/log/handlers/text"
 
 	"github.com/blippar/mgo-exporter/exporter"
-	"github.com/blippar/mgo-exporter/logstash"
+	"github.com/blippar/mgo-exporter/forwarder"
+	"github.com/blippar/mgo-exporter/forwarder/logstash"
+	"github.com/blippar/mgo-exporter/forwarder/stdout"
 )
 
 const (
@@ -26,6 +28,7 @@ func main() {
 		Database []string `arg:"-d,separate,help:database name to monitor"`
 		Repl     string   `arg:"-r,help:replicaSet name to monitor"`
 		Logstash string   `arg:"-l,help:Logstash URI to send messages to"`
+		StdOut   bool     `arg:"-s,help:Write messages to stdout"`
 		Verbose  bool     `arg:"-v,help:enable a more verbose logging"`
 		Quiet    bool     `arg:"-q,help:enable quieter logging"`
 	}
@@ -42,10 +45,16 @@ func main() {
 		log.SetLevel(log.InfoLevel)
 	}
 
-	// Init Logstash Forwarder
-	forwarder, err := logstash.NewTCPForwarder(args.Logstash)
-	if err != nil {
-		log.WithError(err).Fatal("initLogstashForwarderError")
+	// Init Forwarder
+	var err error
+	var forwarder forwarder.Forwarder
+	if args.StdOut {
+		forwarder, _ = stdout.NewForwarder(true)
+	} else {
+		forwarder, err = logstash.NewTCPForwarder(args.Logstash)
+		if err != nil {
+			log.WithError(err).Fatal("initLogstashForwarderError")
+		}
 	}
 
 	// Init MongoDB Connection

@@ -6,7 +6,7 @@ import (
 	log "github.com/apex/log"
 	mgo "gopkg.in/mgo.v2"
 
-	"github.com/blippar/mgo-exporter/logstash"
+	"github.com/blippar/mgo-exporter/forwarder"
 	"github.com/blippar/mgo-exporter/mongo"
 )
 
@@ -15,7 +15,7 @@ type MongoStatsExporter struct {
 	session   *mgo.Session
 	info      ServerInfo
 	databases []string
-	forwarder *logstash.TCPForwarder
+	forwarder forwarder.Forwarder
 	every     time.Duration
 	doneCh    chan struct{}
 	stopCh    chan struct{}
@@ -23,7 +23,7 @@ type MongoStatsExporter struct {
 }
 
 // NewMongoStatsExporter ...
-func NewMongoStatsExporter(connURI string, databases []string, repl string, fwd *logstash.TCPForwarder, every time.Duration) (*MongoStatsExporter, error) {
+func NewMongoStatsExporter(connURI string, databases []string, repl string, fwd forwarder.Forwarder, every time.Duration) (*MongoStatsExporter, error) {
 
 	// Set MongoDB driver configuration
 	dialInfo, err := mgo.ParseURL(connURI)
@@ -217,3 +217,6 @@ func (e *MongoStatsExporter) Wait() <-chan struct{} {
 func (e *MongoStatsExporter) Close() {
 	e.session.Close()
 }
+
+// NOTE: export only if PRIMARY or SOLO
+// NOTE: see about nested field
