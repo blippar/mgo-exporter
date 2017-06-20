@@ -8,6 +8,7 @@ import (
 
 	"github.com/blippar/mgo-exporter/forwarder"
 	"github.com/blippar/mgo-exporter/mongo"
+	"github.com/blippar/mgo-exporter/mongo/model"
 )
 
 // MongoStatsExporter ...
@@ -79,44 +80,44 @@ func (e *MongoStatsExporter) reconnect() error {
 	return e.isConnected()
 }
 
-func (e *MongoStatsExporter) export(exportTime time.Time) []*Message {
+func (e *MongoStatsExporter) export(exportTime time.Time) *Message {
 
 	var err error
 
-	sMsg := make([]*Message, 0, 1+len(e.databases))
 	mongoInfo := e.info
 	mongoInfo.Connected = true
 
-	m := &Message{
+	msg := &Message{
 		Time:  exportTime,
 		Mongo: &mongoInfo,
 		Type:  "serverStatus",
 	}
-	sMsg = append(sMsg, m)
 
 	log.WithFields(e.logFields).Info("mongoExport")
+
 	// Export Server status then if sucessful try to excract other info
-	m.ServerStatus, err = mongo.GetServerStatus(e.session)
+	msg.ServerStatus, err = mongo.GetServerStatus(e.session)
 	if err != nil {
 		log.WithFields(e.logFields).WithError(err).Error("getServerStatusError")
-		return sMsg
+		return msg
 	}
 
 	// Export ReplicaSet status
 	if e.info.ReplicaSet != "" {
-		m.Repl, err = mongo.GetReplStatus(e.session)
+		msg.Repl, err = mongo.GetReplStatus(e.session)
 		if err != nil {
 			log.WithFields(e.logFields).WithError(err).Warn("getReplStatusError")
 		}
-		m.NodeReplInfo = getNodeReplInfo(m.Repl)
+		msg.NodeReplInfo = getNodeReplInfo(msg.Repl)
 	}
 
 	// If node is part of a ReplicaSet and is not PRIMARY then skip dbStats export
-	if m.NodeReplInfo != nil && m.NodeReplInfo.State != mongo.StatePrimary {
-		return sMsg
+	if msg.NodeReplInfo != nil && msg.NodeReplInfo.State != mongo.StatePrimary {
+		return msg
 	}
 
 	// Export DB stats
+	dbS := make([]*model.DBStats, 0, len(e.databases))
 	for _, db := range e.databases {
 
 		log.WithFields(e.logFields).WithField("db", db).Info("mongoDBExport")
@@ -125,16 +126,11 @@ func (e *MongoStatsExporter) export(exportTime time.Time) []*Message {
 		if err != nil {
 			log.WithFields(e.logFields).WithError(err).Warn("getDBStatsError")
 		}
-		dmsg := &Message{
-			Time:    exportTime,
-			Mongo:   &mongoInfo,
-			DBStats: dbStats,
-			Type:    "dbStats",
-		}
-		sMsg = append(sMsg, dmsg)
+		dbS = append(dbS, dbStats)
 	}
+	msg.DBStats = dbS
 
-	return sMsg
+	return msg
 }
 
 func (e *MongoStatsExporter) run() {
@@ -148,7 +144,7 @@ func (e *MongoStatsExporter) run() {
 		case <-ticker.C:
 
 			var errCo error
-			var messages []*Message
+			var msg *Message
 			ctime := time.Now()
 
 			// Try to check if connected and try to reconnect before exporting
@@ -165,26 +161,22 @@ func (e *MongoStatsExporter) run() {
 				mongoInfo.Connected = false
 				mongoInfo.Error = errCo.Error()
 
-				messages = []*Message{
-					{
-						Time:  ctime,
-						Mongo: &mongoInfo,
-						Type:  "serverStatus",
-					},
+				msg = &Message{
+					Time:  ctime,
+					Mongo: &mongoInfo,
+					Type:  "serverStatus",
 				}
 
 			} else { // Else export MongoDB data
 
-				messages = e.export(ctime)
+				msg = e.export(ctime)
 
 			}
 
 			// Send Messages to Logstash
-			for _, m := range messages {
-				if err := e.forwarder.Send(m); err != nil {
-					log.WithError(err).Error("logstashSendMessageError")
-					return
-				}
+			if err := e.forwarder.Send(msg); err != nil {
+				log.WithError(err).Error("logstashSendMessageError")
+				return
 			}
 
 		case <-e.stopCh:
@@ -222,5 +214,3 @@ func (e *MongoStatsExporter) Wait() <-chan struct{} {
 func (e *MongoStatsExporter) Close() {
 	e.session.Close()
 }
-
-// NOTE: see about nested field

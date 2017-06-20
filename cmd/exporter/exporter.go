@@ -58,7 +58,7 @@ func main() {
 	}
 
 	// Init MongoDB Connection
-	exporter, err := exporter.NewMongoStatsExporter(args.MongoDB, args.Database, args.Repl, forwarder, 10*time.Second)
+	exporter, err := exporter.NewMongoStatsExporter(args.MongoDB, args.Database, args.Repl, forwarder, 1*time.Second)
 	if err != nil {
 		log.WithError(err).Fatal("initMongoStatsExporterError")
 	}

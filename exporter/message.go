@@ -11,7 +11,7 @@ type Message struct {
 	Time         time.Time           `json:"time"`
 	Mongo        *ServerInfo         `json:"mongo"`
 	ServerStatus *model.ServerStatus `json:"serverStatus,omitempty"`
-	DBStats      *model.DBStats      `json:"dbStats,omitempty"`
+	DBStats      []*model.DBStats    `json:"dbStats,omitempty"`
 	Repl         *model.ReplStatus   `json:"replStatus,omitempty"`
 	NodeReplInfo *ReplicaSetInfo     `json:"nodeReplInfo,omitempty"`
 	Type         string              `json:"type"`
