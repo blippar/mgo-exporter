@@ -67,7 +67,7 @@ func GetReplStatus(session *mgo.Session) (*model.ReplStatus, error) {
 		return result, err
 	}
 
-	result.JSONMembers = make(map[int]model.ReplMember)
+	result.JSONMembers = make(map[int]*model.ReplMember)
 	for _, v := range result.Members {
 		result.JSONMembers[v.ID] = v
 	}

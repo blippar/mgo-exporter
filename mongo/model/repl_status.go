@@ -6,14 +6,14 @@ import (
 
 // ReplStatus ...
 type ReplStatus struct {
-	Date        *time.Time         `bson:"date,omitempty" json:"date,omitempty"`
-	Members     []ReplMember       `bson:"members,omitempty" json:"-"`
-	JSONMembers map[int]ReplMember `bson:"-" json:"members,omitempty"`
-	MyState     *int               `bson:"myState,omitempty" json:"myState,omitempty"`
-	Set         string             `bson:"set,omitempty" json:"set,omitempty"`
-	SyncingTo   string             `bson:"syncingTo,omitempty" json:"syncingTo,omitempty"`
-	OK          int                `bson:"ok" json:"ok"`
-	Error       string             `json:"error,omitempty"`
+	Date        *time.Time          `bson:"date,omitempty" json:"date,omitempty"`
+	Members     []*ReplMember       `bson:"members,omitempty" json:"-"`
+	JSONMembers map[int]*ReplMember `bson:"-" json:"members,omitempty"`
+	MyState     *int                `bson:"myState,omitempty" json:"myState,omitempty"`
+	Set         string              `bson:"set,omitempty" json:"set,omitempty"`
+	SyncingTo   string              `bson:"syncingTo,omitempty" json:"syncingTo,omitempty"`
+	OK          int                 `bson:"ok" json:"ok"`
+	Error       string              `json:"error,omitempty"`
 }
 
 // ReplMember ...

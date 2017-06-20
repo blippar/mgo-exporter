@@ -14,17 +14,21 @@ func getNodeReplInfo(repl *model.ReplStatus) *ReplicaSetInfo {
 
 	members := repl.Members
 
-	var me model.ReplMember
+	var me *model.ReplMember
 	for _, mb := range members {
 		if mb.Self == true {
 			me = mb
 		}
 	}
+	// NOTE: we might need to add an explicit error if this happens
+	if me == nil {
+		return nil
+	}
 
 	var biggestLag int64
 	oplogDiff := make(map[int]int64)
 	for _, mb := range members {
-		if mb.Self == true {
+		if mb.Self == true || me.OPTimeDate == nil || mb.OPTimeDate == nil {
 			continue
 		}
 		diff := mb.OPTimeDate.Sub(*me.OPTimeDate)

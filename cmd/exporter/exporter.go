@@ -8,6 +8,7 @@ import (
 
 	"github.com/alexflint/go-arg"
 	"github.com/apex/log"
+	"github.com/apex/log/handlers/json"
 	"github.com/apex/log/handlers/text"
 
 	"github.com/blippar/mgo-exporter/exporter"
@@ -26,12 +27,16 @@ func main() {
 		Repl     string   `arg:"-r,help:replicaSet name to monitor"`
 		Logstash string   `arg:"-l,help:Logstash URI to send messages to"`
 		Verbose  bool     `arg:"-v,help:enable a more verbose logging"`
+		Quiet    bool     `arg:"-q,help:enable quieter logging"`
 	}
 	args.Logstash = defaultLogstashHost
 	arg.MustParse(&args)
 
 	log.SetHandler(text.New(os.Stderr))
-	if args.Verbose {
+	if args.Quiet {
+		log.SetHandler(json.New(os.Stderr))
+		log.SetLevel(log.WarnLevel)
+	} else if args.Verbose {
 		log.SetLevel(log.DebugLevel)
 	} else {
 		log.SetLevel(log.InfoLevel)
