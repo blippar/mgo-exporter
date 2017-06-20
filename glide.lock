@@ -1,0 +1,21 @@
+hash: 9376d55fb10ed283b6c50e1495068f16fff8fb8feaee5582b98486316dfed59f
+updated: 2017-06-20T15:17:14.51194235+01:00
+imports:
+- name: github.com/alexflint/go-arg
+  version: cef6506c97e5731da728c374ff3523e481026423
+- name: github.com/alexflint/go-scalar
+  version: 45e5d6cd8605faef82fda2bacc59e734a0b6f1f0
+- name: github.com/apex/log
+  version: 8f3a15d95392c8fc202d1e1059f46df21dff2992
+  subpackages:
+  - handlers/text
+- name: github.com/pkg/errors
+  version: c605e284fe17294bda444b34710735b29d1a9d90
+- name: gopkg.in/mgo.v2
+  version: 3f83fa5005286a7fe593b055f0d7771a7dce4655
+  subpackages:
+  - bson
+  - internal/json
+  - internal/sasl
+  - internal/scram
+testImports: []
