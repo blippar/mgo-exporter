@@ -1,0 +1,369 @@
+{
+  "template": "mgo-exporter-*",
+  "settings": {
+    "index.refresh_interval": "10s"
+  },
+  "order": 0,
+  "mappings": {
+    "serverStatus": {
+      "dynamic_templates": [
+        {
+          "repl_stateStr": {
+            "match_mapping_type": "string",
+            "path_match": "replStatus.members.*.stateStr",
+            "mapping": {
+              "fields": {
+                "keyword": {
+                  "ignore_above": 256,
+                  "type": "keyword"
+                }
+              },
+              "type": "text"
+            }
+          }
+        },
+        {
+          "repl_name": {
+            "match_mapping_type": "string",
+            "path_match": "replStatus.members.*.name",
+            "mapping": {
+              "type": "keyword"
+            }
+          }
+        }
+      ],
+      "properties": {
+        "@timestamp": {
+          "type": "date"
+        },
+        "@version": {
+          "type": "keyword"
+        },
+        "host": {
+          "type": "keyword"
+        },
+        "port": {
+          "type": "long"
+        },
+        "time": {
+          "type": "date"
+        },
+        "type": {
+          "type": "keyword"
+        },
+        "mongo": {
+          "properties": {
+            "connected": {
+              "type": "boolean"
+            },
+            "error": {
+              "fields": {
+                "keyword": {
+                  "ignore_above": 256,
+                  "type": "keyword"
+                }
+              },
+              "type": "text"
+            },
+            "host": {
+              "type": "keyword"
+            },
+            "replSet": {
+              "type": "keyword"
+            }
+          }
+        },
+        "nodeReplInfo": {
+          "properties": {
+            "configVersion": {
+              "type": "long"
+            },
+            "name": {
+              "type": "keyword"
+            },
+            "optime": {
+              "type": "long"
+            },
+            "optimeDate": {
+              "type": "date"
+            },
+            "optimeLag": {
+              "type": "long"
+            },
+            "set": {
+              "type": "keyword"
+            },
+            "state": {
+              "type": "long"
+            },
+            "stateStr": {
+              "fields": {
+                "keyword": {
+                  "ignore_above": 256,
+                  "type": "keyword"
+                }
+              },
+              "type": "text"
+            },
+            "uptime": {
+              "type": "long"
+            }
+          }
+        },
+        "replStatus": {
+          "properties": {
+            "date": {
+              "type": "date"
+            },
+            "myState": {
+              "type": "long"
+            },
+            "ok": {
+              "type": "long"
+            },
+            "set": {
+              "type": "keyword"
+            },
+            "syncingTo": {
+              "type": "keyword"
+            }
+          }
+        },
+        "serverStatus": {
+          "properties": {
+            "asserts": {
+              "properties": {
+                "msg": {
+                  "type": "long"
+                },
+                "regular": {
+                  "type": "long"
+                },
+                "rollovers": {
+                  "type": "long"
+                },
+                "user": {
+                  "type": "long"
+                },
+                "warning": {
+                  "type": "long"
+                }
+              }
+            },
+            "connections": {
+              "properties": {
+                "available": {
+                  "type": "long"
+                },
+                "current": {
+                  "type": "long"
+                },
+                "totalCreated": {
+                  "type": "long"
+                }
+              }
+            },
+            "globalLock": {
+              "properties": {
+                "activeClients": {
+                  "properties": {
+                    "readers": {
+                      "type": "long"
+                    },
+                    "total": {
+                      "type": "long"
+                    },
+                    "writers": {
+                      "type": "long"
+                    }
+                  }
+                },
+                "currentQueue": {
+                  "properties": {
+                    "readers": {
+                      "type": "long"
+                    },
+                    "total": {
+                      "type": "long"
+                    },
+                    "writers": {
+                      "type": "long"
+                    }
+                  }
+                },
+                "totalTime": {
+                  "type": "long"
+                }
+              }
+            },
+            "host": {
+              "type": "keyword"
+            },
+            "localTime": {
+              "type": "date"
+            },
+            "network": {
+              "properties": {
+                "bytesIn": {
+                  "type": "long"
+                },
+                "bytesOut": {
+                  "type": "long"
+                },
+                "numRequests": {
+                  "type": "long"
+                }
+              }
+            },
+            "ok": {
+              "type": "long"
+            },
+            "opcounters": {
+              "properties": {
+                "command": {
+                  "type": "long"
+                },
+                "delete": {
+                  "type": "long"
+                },
+                "getmore": {
+                  "type": "long"
+                },
+                "insert": {
+                  "type": "long"
+                },
+                "query": {
+                  "type": "long"
+                },
+                "update": {
+                  "type": "long"
+                }
+              }
+            },
+            "opcountersRepl": {
+              "properties": {
+                "command": {
+                  "type": "long"
+                },
+                "delete": {
+                  "type": "long"
+                },
+                "getmore": {
+                  "type": "long"
+                },
+                "insert": {
+                  "type": "long"
+                },
+                "query": {
+                  "type": "long"
+                },
+                "update": {
+                  "type": "long"
+                }
+              }
+            },
+            "pid": {
+              "type": "long"
+            },
+            "process": {
+              "type": "keyword"
+            },
+            "uptime": {
+              "type": "long"
+            },
+            "uptimeEstimate": {
+              "type": "long"
+            },
+            "uptimeMillis": {
+              "type": "long"
+            },
+            "version": {
+              "type": "keyword"
+            }
+          }
+        }
+      }
+    },
+    "dbStats": {
+      "properties": {
+        "@timestamp": {
+          "type": "date"
+        },
+        "@version": {
+          "type": "keyword"
+        },
+        "host": {
+          "type": "keyword"
+        },
+        "port": {
+          "type": "long"
+        },
+        "time": {
+          "type": "date"
+        },
+        "type": {
+          "type": "keyword"
+        },
+        "mongo": {
+          "properties": {
+            "connected": {
+              "type": "boolean"
+            },
+            "error": {
+              "fields": {
+                "keyword": {
+                  "ignore_above": 256,
+                  "type": "keyword"
+                }
+              },
+              "type": "text"
+            },
+            "host": {
+              "type": "keyword"
+            },
+            "replSet": {
+              "type": "keyword"
+            }
+          }
+        },
+        "dbStats": {
+          "properties": {
+            "avgObjSize": {
+              "type": "long"
+            },
+            "collections": {
+              "type": "long"
+            },
+            "dataSize": {
+              "type": "long"
+            },
+            "db": {
+              "type": "keyword"
+            },
+            "fileSize": {
+              "type": "long"
+            },
+            "indexSize": {
+              "type": "long"
+            },
+            "indexes": {
+              "type": "long"
+            },
+            "numExtents": {
+              "type": "long"
+            },
+            "objects": {
+              "type": "long"
+            },
+            "ok": {
+              "type": "long"
+            },
+            "storageSize": {
+              "type": "long"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -90,6 +90,7 @@ func (e *MongoStatsExporter) export(exportTime time.Time) []*Message {
 	m := &Message{
 		Time:  exportTime,
 		Mongo: &mongoInfo,
+		Type:  "serverStatus",
 	}
 	sMsg = append(sMsg, m)
 
@@ -123,6 +124,7 @@ func (e *MongoStatsExporter) export(exportTime time.Time) []*Message {
 			Time:    exportTime,
 			Mongo:   &mongoInfo,
 			DBStats: dbStats,
+			Type:    "dbStats",
 		}
 		sMsg = append(sMsg, dmsg)
 	}
@@ -162,6 +164,7 @@ func (e *MongoStatsExporter) run() {
 					{
 						Time:  ctime,
 						Mongo: &mongoInfo,
+						Type:  "serverStatus",
 					},
 				}
 

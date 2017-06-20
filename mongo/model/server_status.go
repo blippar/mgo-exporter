@@ -22,9 +22,9 @@ type ServerStatus struct {
 	Network        *Network     `bson:"network,omitempty" json:"network,omitempty"`
 	OPCounters     *OPCounters  `bson:"opcounters,omitempty" json:"opcounters,omitempty"`
 	OPCountersRepl *OPCounters  `bson:"opcountersRepl,omitempty" json:"opcountersRepl,omitempty"`
-	Repl           ServerRepl   `bson:"repl,omitempty" json:"repl,omitempty"`
 	OK             int          `bson:"ok" json:"ok"`
 	Error          string       `json:"error,omitempty"`
+	// Repl           ServerRepl   `bson:"repl,omitempty" json:"repl,omitempty"`
 }
 
 // Asserts ...

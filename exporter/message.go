@@ -14,6 +14,7 @@ type Message struct {
 	DBStats      *model.DBStats      `json:"dbStats,omitempty"`
 	Repl         *model.ReplStatus   `json:"replStatus,omitempty"`
 	NodeReplInfo *ReplicaSetInfo     `json:"nodeReplInfo,omitempty"`
+	Type         string              `json:"type"`
 }
 
 // ServerInfo ...

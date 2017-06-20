@@ -55,5 +55,6 @@ services:
     - /conf/logstash.conf
     volumes:
     - $PWD/compose/config:/conf
+    - $PWD/logstash/templates:/templates
     ports:
     - "2000:2000"
