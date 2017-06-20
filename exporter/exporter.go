@@ -111,6 +111,11 @@ func (e *MongoStatsExporter) export(exportTime time.Time) []*Message {
 		m.NodeReplInfo = getNodeReplInfo(m.Repl)
 	}
 
+	// If node is part of a ReplicaSet and is not PRIMARY then skip dbStats export
+	if m.NodeReplInfo != nil && m.NodeReplInfo.State != mongo.StatePrimary {
+		return sMsg
+	}
+
 	// Export DB stats
 	for _, db := range e.databases {
 
@@ -218,5 +223,4 @@ func (e *MongoStatsExporter) Close() {
 	e.session.Close()
 }
 
-// NOTE: export only if PRIMARY or SOLO
 // NOTE: see about nested field
