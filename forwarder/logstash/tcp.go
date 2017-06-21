@@ -3,7 +3,14 @@ package logstash
 import (
 	"encoding/json"
 	"net"
+	"net/url"
+
+	"github.com/blippar/mgo-exporter/forwarder"
 )
+
+func init() {
+	forwarder.Factory.Register(NewTCPForwarder, "logstash")
+}
 
 // TCPForwarder ...
 type TCPForwarder struct {
@@ -11,9 +18,9 @@ type TCPForwarder struct {
 }
 
 // NewTCPForwarder ...
-func NewTCPForwarder(connURI string) (*TCPForwarder, error) {
+func NewTCPForwarder(connURL *url.URL) (forwarder.Forwarder, error) {
 
-	conn, err := net.Dial("tcp", connURI)
+	conn, err := net.Dial("tcp", connURL.Host)
 	if err != nil {
 		return nil, err
 	}
@@ -32,7 +39,6 @@ func (f *TCPForwarder) Send(m interface{}) error {
 	if js, err = json.Marshal(m); err != nil {
 		return err
 	}
-	// log.WithField("msg", string(js)).Debug("sendMessage")
 
 	// To work with tls and tcp transports via json_lines codec
 	js = append(js, byte('\n'))

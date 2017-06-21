@@ -20,7 +20,7 @@ type MongoStatsExporter struct {
 	every     time.Duration
 	doneCh    chan struct{}
 	stopCh    chan struct{}
-	logFields log.Fields
+	LogFields log.Fields
 }
 
 // NewMongoStatsExporter ...
@@ -36,8 +36,6 @@ func NewMongoStatsExporter(connURI string, databases []string, repl string, fwd 
 	dialInfo.FailFast = true
 	dialInfo.Direct = true
 	dialInfo.ReplicaSetName = repl
-	// dialInfo.Username = ""
-	// dialInfo.Password = ""
 
 	// Connect to MongoDB
 	session, err := mgo.DialWithInfo(dialInfo)
@@ -47,11 +45,11 @@ func NewMongoStatsExporter(connURI string, databases []string, repl string, fwd 
 	session.SetMode(mgo.Monotonic, true)
 
 	// Default LogFields
-	logFields := log.Fields{
+	LogFields := log.Fields{
 		"host": dialInfo.Addrs[0],
 	}
 	if repl != "" {
-		logFields["repl"] = repl
+		LogFields["repl"] = repl
 	}
 
 	// Return new object
@@ -64,7 +62,7 @@ func NewMongoStatsExporter(connURI string, databases []string, repl string, fwd 
 		databases: databases,
 		forwarder: fwd,
 		every:     every,
-		logFields: logFields,
+		LogFields: LogFields,
 	}, nil
 }
 
@@ -90,23 +88,25 @@ func (e *MongoStatsExporter) export(exportTime time.Time) *Message {
 	msg := &Message{
 		Time:  exportTime,
 		Mongo: &mongoInfo,
-		Type:  "serverStatus",
 	}
 
-	log.WithFields(e.logFields).Info("mongoExport")
+	log.WithFields(e.LogFields).Info("mongoExport")
 
 	// Export Server status then if sucessful try to excract other info
 	msg.ServerStatus, err = mongo.GetServerStatus(e.session)
 	if err != nil {
-		log.WithFields(e.logFields).WithError(err).Error("getServerStatusError")
+		log.WithFields(e.LogFields).WithError(err).Error("getServerStatusError")
 		return msg
 	}
+	log.WithFields(e.LogFields).Debug("getServerStatusOK")
 
 	// Export ReplicaSet status
 	if e.info.ReplicaSet != "" {
 		msg.Repl, err = mongo.GetReplStatus(e.session)
 		if err != nil {
-			log.WithFields(e.logFields).WithError(err).Warn("getReplStatusError")
+			log.WithFields(e.LogFields).WithError(err).Warn("getReplStatusError")
+		} else {
+			log.WithFields(e.LogFields).Debug("getReplStatusOK")
 		}
 		msg.NodeReplInfo = getNodeReplInfo(msg.Repl)
 	}
@@ -120,11 +120,14 @@ func (e *MongoStatsExporter) export(exportTime time.Time) *Message {
 	dbS := make([]*model.DBStats, 0, len(e.databases))
 	for _, db := range e.databases {
 
-		log.WithFields(e.logFields).WithField("db", db).Info("mongoDBExport")
-
 		dbStats, err := mongo.GetDBStats(e.session, db)
 		if err != nil {
-			log.WithFields(e.logFields).WithError(err).Warn("getDBStatsError")
+			log.WithFields(e.LogFields).
+				WithField("db", db).
+				WithError(err).
+				Warn("getDBStatsError")
+		} else {
+			log.WithFields(e.LogFields).WithField("db", db).Debug("getDBStatsOK")
 		}
 		dbS = append(dbS, dbStats)
 	}
@@ -155,7 +158,7 @@ func (e *MongoStatsExporter) run() {
 			// If we can't connect, create an error message
 			if errCo != nil {
 
-				log.WithFields(e.logFields).WithError(errCo).Warn("mongoConError")
+				log.WithFields(e.LogFields).WithError(errCo).Warn("mongoConError")
 
 				mongoInfo := e.info
 				mongoInfo.Connected = false
@@ -164,7 +167,6 @@ func (e *MongoStatsExporter) run() {
 				msg = &Message{
 					Time:  ctime,
 					Mongo: &mongoInfo,
-					Type:  "serverStatus",
 				}
 
 			} else { // Else export MongoDB data

@@ -13,26 +13,27 @@ import (
 
 	"github.com/blippar/mgo-exporter/exporter"
 	"github.com/blippar/mgo-exporter/forwarder"
-	"github.com/blippar/mgo-exporter/forwarder/logstash"
-	"github.com/blippar/mgo-exporter/forwarder/stdout"
+
+	_ "github.com/blippar/mgo-exporter/forwarder/file"
+	_ "github.com/blippar/mgo-exporter/forwarder/logstash"
 )
 
 const (
-	defaultLogstashHost = "127.0.0.1:2000"
+	// defaultForwarderURI = "logstash://127.0.0.1:2000"
+	defaultForwarderURI = "file:///dev/stdout?pretty"
 )
 
 func main() {
 
 	var args struct {
-		MongoDB  string   `arg:"positional,help:Mongo URI for the node to connect to"`
-		Database []string `arg:"-d,separate,help:database name to monitor"`
-		Repl     string   `arg:"-r,help:replicaSet name to monitor"`
-		Logstash string   `arg:"-l,help:Logstash URI to send messages to"`
-		StdOut   bool     `arg:"-s,help:Write messages to stdout"`
-		Verbose  bool     `arg:"-v,help:enable a more verbose logging"`
-		Quiet    bool     `arg:"-q,help:enable quieter logging"`
+		MongoDB   string   `arg:"positional,help:Mongo URI for the node to connect to"`
+		Database  []string `arg:"-d,separate,help:database name to monitor"`
+		Repl      string   `arg:"-r,help:replicaSet name to monitor"`
+		Forwarder string   `arg:"-f,help:Forwarder URI to send messages to"`
+		Verbose   bool     `arg:"-v,help:enable a more verbose logging"`
+		Quiet     bool     `arg:"-q,help:enable quieter logging"`
 	}
-	args.Logstash = defaultLogstashHost
+	args.Forwarder = defaultForwarderURI
 	arg.MustParse(&args)
 
 	log.SetHandler(text.New(os.Stderr))
@@ -46,22 +47,18 @@ func main() {
 	}
 
 	// Init Forwarder
-	var err error
-	var forwarder forwarder.Forwarder
-	if args.StdOut {
-		forwarder, _ = stdout.NewForwarder(true)
-	} else {
-		forwarder, err = logstash.NewTCPForwarder(args.Logstash)
-		if err != nil {
-			log.WithError(err).Fatal("initLogstashForwarderError")
-		}
+	fwd, err := forwarder.Factory.NewForwarder(args.Forwarder)
+	if err != nil {
+		log.WithError(err).WithField("uri", args.Forwarder).Fatal("initForwarderError")
 	}
+	log.WithField("uri", args.Forwarder).Info("initForwarderDone")
 
 	// Init MongoDB Connection
-	exporter, err := exporter.NewMongoStatsExporter(args.MongoDB, args.Database, args.Repl, forwarder, 1*time.Second)
+	exporter, err := exporter.NewMongoStatsExporter(args.MongoDB, args.Database, args.Repl, fwd, 10*time.Second)
 	if err != nil {
-		log.WithError(err).Fatal("initMongoStatsExporterError")
+		log.WithError(err).Fatal("initMongoExporterError")
 	}
+	log.WithFields(exporter.LogFields).Info("initMongoExporterDone")
 	exporter.Start()
 
 	// Initialize signal channel
@@ -77,5 +74,5 @@ func main() {
 		exporter.Stop()
 	}
 	exporter.Close()
-	forwarder.Close()
+	fwd.Close()
 }
