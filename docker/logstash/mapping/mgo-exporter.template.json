@@ -262,6 +262,28 @@
                 }
               }
             },
+            "mem": {
+              "properties": {
+                "bitd": {
+                  "type": "long"
+                },
+                "resident": {
+                  "type": "long"
+                },
+                "virtual": {
+                  "type": "long"
+                },
+                "supported": {
+                  "type": "long"
+                },
+                "mapped": {
+                  "type": "long"
+                },
+                "mappedWithJournal": {
+                  "type": "long"
+                }
+              }
+            },
             "pid": {
               "type": "long"
             },
