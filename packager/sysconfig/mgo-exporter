@@ -1,0 +1,5 @@
+MGOEXPORT_MONGODB="localhost:27017"
+MGOEXPORT_DATABASES="test local"
+MGOEXPORT_REPL=""
+MGOEXPORT_FORWARDER="file:///var/log/mgo-exporter-metrics.log"
+MGOEXPORT_LOGFILE=/var/log/mgo-exporter.log

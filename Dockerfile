@@ -10,7 +10,7 @@ RUN cd /go/src/github.com/blippar/mgo-exporter \
 
 FROM scratch AS runtime
 
-COPY --from=builder /go/src/github.com/blippar/mgo-exporter/bin/exporter /mgo-exporter
+COPY --from=builder /go/src/github.com/blippar/mgo-exporter/bin/mgo-exporter /mgo-exporter
 
 ENTRYPOINT ["/mgo-exporter"]
 CMD        ["-h"]

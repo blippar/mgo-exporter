@@ -3,7 +3,7 @@ package exporter
 import (
 	"time"
 
-	log "github.com/apex/log"
+	log "github.com/sirupsen/logrus"
 	mgo "gopkg.in/mgo.v2"
 
 	"github.com/blippar/mgo-exporter/forwarder"

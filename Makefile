@@ -1,51 +1,71 @@
 # Default config
-GOBIN	  := $(shell which go)
+VERSION   = 0.1.0
 VERBOSE   ?= false
+
+# Go configuration
+GOBIN	  := $(shell which go)
 GOENV	  ?=
+GOOPT     ?=
+
+# FPM configuration
+FPMBIN    := $(shell which fpm)
+FPMFLAGS  ?=
 
 # If run as 'make VERBOSE=true', it will pass th '-v' option to GOBIN
 ifeq ($(VERBOSE),true)
 GOOPT     += -v
+FPMFLAGS  += --verbose
 endif
 
-# Targets configuration
-EXPORTER_BIN = bin/exporter
+# Binary targets configuration
+EXPORTER_BIN = bin/mgo-exporter
+TARGETS     := $(EXPORTER_BIN)
+GOPKGDIR     = $(@:bin/%=./cmd/%)
 
-# List all target to create a rul that manage all of them
-TARGETS   := $(EXPORTER_BIN)
+# Package targets configuration
+DEBPKG	   = dist/mgo-export_$(VERSION).x86_64.deb
+RPMPKG	   = dist/mgo-export_$(VERSION).x86_64.rpm
+FPMPKGS    = $(DEBPKG) $(RPMPKG)
 
-# Precreate a variable to get package name from binary name
-PKGDIR     = $(@:bin/%=./cmd/%)
+# Create FPMFLAGS and FPMFILES from config
+FPMFLAGS  += -n "mgo-exporter" -v $(VERSION) --force \
+	     --config-files /etc/sysconfig/mgo-exporter \
+             --post-install packager/postinst.sh --post-uninstall packager/postuninst.sh
+FPMFILES  += $(EXPORTER_BIN)=/usr/bin/ \
+             packager/sysconfig/mgo-exporter=/etc/sysconfig/ \
+	     packager/systemd/mgo-exporter.service=/usr/lib/systemd/system/
 
 # Local meta targets
 all: $(TARGETS)
 exporter: $(EXPORTER_BIN)
 
-# Check if GOBIN exists before running a rule
-_check_gobin:
-	$(if $(wildcard $(GOBIN)),,$(error GOBIN is not set, is go installed))
-
-# Build binaries with GOBIN using target name & PKGDIR
-$(TARGETS): _check_gobin
-	$(info >>> Building $@ from $(PKGDIR) using $(GOBIN))
+# Build binaries with GOBIN using target name & GOPKGDIR
+$(TARGETS):
+	$(info >>> Building $@ from $(GOPKGDIR) using $(GOBIN))
 	$(if $(GOENV),$(info >>> with $(GOENV) and GOOPT=$(GOOPT)),)
-ifeq ($(VERBOSE),true)
-	$(GOENV) $(GOBIN) build $(GOOPT) -o $@ $(PKGDIR)
-else
-	@$(GOENV) $(GOBIN) build $(GOOPT) -o $@ $(PKGDIR)
-endif
+	$(GOENV) $(GOBIN) build $(GOOPT) -o $@ $(GOPKGDIR)
+
+# Run tests using GOBIN
+test:
+	$(info >>> Testing ./... using $(GOBIN))
+	@$(GOBIN) test $(GOOPT) ./...
 
 # Build binaries staticly
 static: GOOPT += -ldflags '-extldflags "-static"'
 static: GOENV += CGO_ENABLED=0 GOOS=linux
 static: $(TARGETS)
 
-# Run tests using GOBIN
-test: _check_gobin
-	$(info >>> Testing ./... using $(GOBIN))
-	@$(GOBIN) test $(GOOPT) ./...
+# Packaging
+rpm: FPMFLAGS += -t rpm -s dir -p dist/NAME_VERSION.ARCH.rpm -a x86_64 --rpm-os linux
+rpm: $(RPMPKG)
+deb: FPMFLAGS += -t deb -s dir -p dist/NAME_VERSION.ARCH.deb -a x86_64
+deb: $(DEBPKG)
+
+$(FPMPKGS): static
+	$(info >>> Building package $@ using fpm)
+	mkdir -p dist
+	$(FPMBIN) $(FPMFLAGS) $(FPMFILES)
 
 # Always execute these targets
-.PHONY: all $(TARGETS)
-.PHONY: exporter static test
-.PHONY: _check_gobin
+.PHONY: all $(TARGETS) $(FPMPKGS)
+.PHONY: exporter static rpm deb test

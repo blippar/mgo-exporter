@@ -8,23 +8,30 @@ import (
 
 // ServerStatus ...
 type ServerStatus struct {
-	Host           string       `bson:"host,omitempty" json:"host,omitempty"`
-	LocalTime      *time.Time   `bson:"localTime,omitempty" json:"localTime,omitempty"`
-	PID            int          `bson:"pid,omitempty" json:"pid,omitempty"`
-	Process        string       `bson:"process,omitempty" json:"process,omitempty"`
-	Uptime         int          `bson:"uptime,omitempty" json:"uptime,omitempty"`
-	UptimeEstimate int          `bson:"uptimeEstimate,omitempty" json:"uptimeEstimate,omitempty"`
-	UptimeMillis   int          `bson:"uptimeMillis,omitempty" json:"uptimeMillis,omitempty"`
-	Version        string       `bson:"version,omitempty" json:"version,omitempty"`
-	Asserts        *Asserts     `bson:"asserts,omitempty" json:"asserts,omitempty"`
-	Connections    *Connections `bson:"connections,omitempty" json:"connections,omitempty"`
-	GlobalLock     *GlobalLock  `bson:"globalLock,omitempty" json:"globalLock,omitempty"`
-	Network        *Network     `bson:"network,omitempty" json:"network,omitempty"`
-	OPCounters     *OPCounters  `bson:"opcounters,omitempty" json:"opcounters,omitempty"`
-	OPCountersRepl *OPCounters  `bson:"opcountersRepl,omitempty" json:"opcountersRepl,omitempty"`
-	OK             int          `bson:"ok" json:"ok"`
-	Error          string       `json:"error,omitempty"`
-	// Repl           ServerRepl   `bson:"repl,omitempty" json:"repl,omitempty"`
+	Host           string                 `bson:"host,omitempty" json:"host,omitempty"`
+	Version        string                 `bson:"version,omitempty" json:"version,omitempty"`
+	Process        string                 `bson:"process,omitempty" json:"process,omitempty"`
+	PID            int                    `bson:"pid,omitempty" json:"pid,omitempty"`
+	Uptime         int                    `bson:"uptime,omitempty" json:"uptime,omitempty"`
+	UptimeEstimate int                    `bson:"uptimeEstimate,omitempty" json:"uptimeEstimate,omitempty"`
+	UptimeMillis   int                    `bson:"uptimeMillis,omitempty" json:"uptimeMillis,omitempty"`
+	LocalTime      *time.Time             `bson:"localTime,omitempty" json:"localTime,omitempty"`
+	Asserts        *Asserts               `bson:"asserts,omitempty" json:"asserts,omitempty"`
+	Connections    *Connections           `bson:"connections,omitempty" json:"connections,omitempty"`
+	GlobalLock     *GlobalLock            `bson:"globalLock,omitempty" json:"globalLock,omitempty"`
+	Network        *Network               `bson:"network,omitempty" json:"network,omitempty"`
+	OPCounters     *OPCounters            `bson:"opcounters,omitempty" json:"opcounters,omitempty"`
+	OPCountersRepl *OPCounters            `bson:"opcountersRepl,omitempty" json:"opcountersRepl,omitempty"`
+	Mem            map[string]interface{} `bson:"mem,omitempty" json:"mem,omitempty"`
+	OK             int                    `bson:"ok" json:"ok"`
+	Error          string                 `json:"error,omitempty"`
+	Dur            *Journaling            `bson:"dur,omitempty" json:"dur,omitempty"`
+	ExtraInfo      *ExtraInfo             `bson:"extra_info,omitempty" json:"extra_info,omitempty"`
+	Locks          map[string]*Lock       `bson:"locks,omitempty" json:"locks,omitempty"`
+	// StorageEngine      map[string]string      `bson:"storageEngine,omitempty" json:"storageEngine,omitempty"`
+	// Metrics            map[string]interface{} `bson:"metrics,omitempty" json:"metrics,omitempty"`
+	// Repl               ServerRepl             `bson:"repl,omitempty" json:"repl,omitempty"`
+	// WriteBacksQueued   *bool                  `bson:"writeBacksQueued,omitempty" json:"writeBacksQueued,omitempty"`
 }
 
 // Asserts ...
@@ -36,6 +43,15 @@ type Asserts struct {
 	Warning   int `bson:"warning" json:"warning"`
 }
 
+// BackgroundFlushing ...
+type BackgroundFlushing struct {
+	Flushes      int        `bson:"flushes" json:"flushes"`
+	TotalMS      int        `bson:"total_ms" json:"total_ms"`
+	AverageMS    float64    `bson:"average_ms" json:"average_ms"`
+	LastMS       int        `bson:"last_ms" json:"last_ms"`
+	LastFinished *time.Time `bson:"last_finished" json:"last_finished"`
+}
+
 // Connections ...
 type Connections struct {
 	Available    int `bson:"available" json:"available"`
@@ -43,18 +59,63 @@ type Connections struct {
 	TotalCreated int `bson:"totalCreated" json:"totalCreated"`
 }
 
-// GlobalLock ...
-type GlobalLock struct {
-	ActiveClients LockType `bson:"activeClients" json:"activeClients"`
-	CurrentQueue  LockType `bson:"currentQueue" json:"currentQueue"`
-	TotalTime     int      `bson:"totalTime" json:"totalTime"`
+// Journaling ...
+type Journaling struct {
+	Commits            int            `bson:"commits" json:"commits"`
+	JournaledMB        int            `bson:"journaledMB" json:"journaledMB"`
+	WriteToDataFilesMB int            `bson:"writeToDataFilesMB" json:"writeToDataFilesMB"`
+	Compression        int            `bson:"compression" json:"compression"`
+	CommitsInWriteLock int            `bson:"commitsInWriteLock" json:"commitsInWriteLock"`
+	EarlyCommits       int            `bson:"earlyCommits" json:"earlyCommits"`
+	TimeMs             JournalingTime `bson:"timeMs" json:"timeMs"`
 }
 
-// LockType ...
-type LockType struct {
+// JournalingTime ...
+type JournalingTime struct {
+	DT                 int `bson:"dt" json:"dt"`
+	PrepLogBuffer      int `bson:"prepLogBuffer" json:"prepLogBuffer"`
+	WriteToJournal     int `bson:"writeToJournal" json:"writeToJournal"`
+	WriteToDataFiles   int `bson:"writeToDataFiles" json:"writeToDataFiles"`
+	RemapPrivateView   int `bson:"remapPrivateView" json:"remapPrivateView"`
+	Commits            int `bson:"commits" json:"commits"`
+	CommitsInWriteLock int `bson:"commitsInWriteLock" json:"commitsInWriteLock"`
+}
+
+// ExtraInfo ...
+type ExtraInfo struct {
+	Note           string `bson:"note" json:"note"`
+	HeapUsageBytes int    `bson:"heap_usage_bytes,omitempty" json:"heap_usage_bytes,omitempty"`
+	PageFaults     int    `bson:"page_faults" json:"page_faults"`
+}
+
+// GlobalLock ...
+type GlobalLock struct {
+	ActiveClients GlobalLockType `bson:"activeClients" json:"activeClients"`
+	CurrentQueue  GlobalLockType `bson:"currentQueue" json:"currentQueue"`
+	TotalTime     int            `bson:"totalTime" json:"totalTime"`
+}
+
+// GlobalLockType ...
+type GlobalLockType struct {
 	Readers int `bson:"readers" json:"readers"`
 	Total   int `bson:"total" json:"total"`
 	Writers int `bson:"writers" json:"writers"`
+}
+
+// Lock ...
+type Lock struct {
+	AcquireCount        *LockAcquire `bson:"acquireCount,omitempty" json:"acquireCount,omitempty"`
+	AcquireWaitCount    *LockAcquire `bson:"acquireWaitCount,omitempty" json:"acquireWaitCount,omitempty"`
+	TimeAcquiringMicros *LockAcquire `bson:"timeAcquiringMicros,omitempty" json:"timeAcquiringMicros,omitempty"`
+	DeadlockCount       *LockAcquire `bson:"deadlockCount,omitempty" json:"deadlockCount,omitempty"`
+}
+
+// LockAcquire ...
+type LockAcquire struct {
+	Shared          *int `bson:"R,omitempty" json:"R,omitempty"`
+	Exclusive       *int `bson:"W,omitempty" json:"W,omitempty"`
+	IntentShared    *int `bson:"r,omitempty" json:"r,omitempty"`
+	IntentExclusive *int `bson:"w,omitempty" json:"w,omitempty"`
 }
 
 // Network ...

@@ -17,9 +17,9 @@ func GetServerStatus(session *mgo.Session) (*model.ServerStatus, error) {
 	err := session.DB(adminDB).Run(
 		bson.D{
 			{Name: "serverStatus", Value: 1},
+			{Name: "metrics", Value: 1},
 			{Name: "locks", Value: 0},
 			{Name: "repl", Value: 0},
-			{Name: "metrics", Value: 0},
 			{Name: "cursors", Value: 0},
 			{Name: "storageEngine", Value: 0},
 			{Name: "dur", Value: 0},

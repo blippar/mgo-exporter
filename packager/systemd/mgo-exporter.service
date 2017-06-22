@@ -1,0 +1,11 @@
+[Unit]
+Description=mgo-exporter: Stats and Metrics exporter for MongoDB
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/sysconfig/mgo-exporter
+ExecStart=/usr/bin/mgo-exporter --quiet ${MGOEXPORT_MONGODB} ${MGOEXPORT_DATABASES}
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

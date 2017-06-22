@@ -9,7 +9,7 @@ services:
     - --replSet
     - mgoExporterSet
     volumes:
-    - $PWD/compose/data/primary:/data
+    - $PWD/docker/compose/primary:/data
     ports:
     - "30001:27017"
 
@@ -21,7 +21,7 @@ services:
     - --replSet
     - mgoExporterSet
     volumes:
-    - $PWD/compose/data/secondary:/data
+    - $PWD/docker/compose/secondary:/data
     ports:
     - "30002:27017"
 
@@ -33,7 +33,7 @@ services:
     - --replSet
     - mgoExporterSet
     volumes:
-    - $PWD/compose/data/fallback:/data
+    - $PWD/docker/compose/fallback:/data
     ports:
     - "30003:27017"
 
@@ -43,7 +43,7 @@ services:
     command:
     - mongod
     volumes:
-    - $PWD/compose/data/solo:/data
+    - $PWD/docker/compose/solo:/data
     ports:
     - "30000:27017"
 
