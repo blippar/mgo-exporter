@@ -1,0 +1,26 @@
+{
+  "dbStats.avgObjSize": {
+    "id": "bytes"
+  },
+  "dbStats.dataSize": {
+    "id": "bytes"
+  },
+  "dbStats.fileSize": {
+    "id": "bytes"
+  },
+  "dbStats.indexSize": {
+    "id": "bytes"
+  },
+  "dbStats.storageSize": {
+    "id": "bytes"
+  },
+  "serverStatus.mem.virtualBytes": {
+    "id": "bytes"
+  },
+  "serverStatus.network.bytesIn": {
+    "id": "bytes"
+  },
+  "serverStatus.network.bytesOut": {
+    "id": "bytes"
+  }
+}

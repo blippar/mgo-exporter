@@ -115,6 +115,15 @@
             "date": {
               "type": "date"
             },
+            "error": {
+              "fields": {
+                "keyword": {
+                  "ignore_above": 256,
+                  "type": "keyword"
+                }
+              },
+              "type": "text"
+            },
             "myState": {
               "type": "long"
             },
@@ -162,6 +171,15 @@
                   "type": "long"
                 }
               }
+            },
+            "error": {
+              "fields": {
+                "keyword": {
+                  "ignore_above": 256,
+                  "type": "keyword"
+                }
+              },
+              "type": "text"
             },
             "globalLock": {
               "properties": {
@@ -264,7 +282,7 @@
             },
             "mem": {
               "properties": {
-                "bitd": {
+                "bits": {
                   "type": "long"
                 },
                 "resident": {
@@ -361,6 +379,15 @@
             },
             "db": {
               "type": "keyword"
+            },
+            "error": {
+              "fields": {
+                "keyword": {
+                  "ignore_above": 256,
+                  "type": "keyword"
+                }
+              },
+              "type": "text"
             },
             "fileSize": {
               "type": "long"

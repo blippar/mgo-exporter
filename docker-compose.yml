@@ -1,6 +1,9 @@
 version: '2'
 
 services:
+
+  ## MongoDB
+
   primary:
     image: mongo:3.0
     hostname: primary
@@ -9,7 +12,8 @@ services:
     - --replSet
     - mgoExporterSet
     volumes:
-    - $PWD/docker/compose/primary:/data
+    - primary-db:/data/db
+    - primary-configdb:/data/configdb
     ports:
     - "30001:27017"
 
@@ -21,7 +25,8 @@ services:
     - --replSet
     - mgoExporterSet
     volumes:
-    - $PWD/docker/compose/secondary:/data
+    - fallback-db:/data/db
+    - fallback-configdb:/data/configdb
     ports:
     - "30002:27017"
 
@@ -33,22 +38,87 @@ services:
     - --replSet
     - mgoExporterSet
     volumes:
-    - $PWD/docker/compose/fallback:/data
+    - secondary-db:/data/db
+    - secondary-configdb:/data/configdb
     ports:
     - "30003:27017"
 
-  solo:
+  provision-replicaset:
     image: mongo:3.0
-    hostname: solo
     command:
-    - mongod
+    - /provision.sh
     volumes:
-    - $PWD/docker/compose/solo:/data
+    - $PWD/docker/compose/mongodb.sh:/provision.sh:ro
+    depends_on:
+    - primary
+    - secondary
+    - fallback
+    restart: "no"
+
+  ## mgo-exporter
+
+  exporter-primary:
+    build: .
+    image: blippar/mgo-exporter
+    command:
+      - --forwarder
+      - logstash://logstash:2000
+      - --repl
+      - mgoExporterSet
+      - primary:27017
+      - test
+      - collection
+    restart: always
+    depends_on:
+    - logstash
+    - primary
+
+  exporter-fallback:
+    build: .
+    image: blippar/mgo-exporter
+    command:
+      - --forwarder
+      - logstash://logstash:2000
+      - --repl
+      - mgoExporterSet
+      - fallback:27017
+      - test
+      - collection
+    restart: always
+    depends_on:
+    - logstash
+    - fallback
+
+  exporter-secondary:
+    build: .
+    image: blippar/mgo-exporter
+    command:
+      - --forwarder
+      - logstash://logstash:2000
+      - --repl
+      - mgoExporterSet
+      - secondary:27017
+      - test
+      - collection
+    restart: always
+    depends_on:
+    - logstash
+    - secondary
+
+  ## ELK
+
+  elastic:
+    image: blacktop/elasticsearch:5.4
+    environment:
+      cluster.name: mgo-exporter
+      ES_JAVA_OPTS: "-Xms1g -Xmx1g"
     ports:
-    - "30000:27017"
+    - "9200:9200"
+    volumes:
+    - elastic-data:/usr/share/elasticsearch/data
 
   logstash:
-    image:  logstash:5.4
+    image: logstash:5.4
     command:
     - logstash
     - -f
@@ -57,3 +127,37 @@ services:
     - $PWD/docker/logstash:/usr/share/logstash/config:ro
     ports:
     - "2000:2000"
+    depends_on:
+    - elastic
+
+  kibana:
+    image: kibana:5.4
+    environment:
+      ELASTICSEARCH_URL: http://elastic:9200
+    ports:
+    - "5601:5601"
+    depends_on:
+    - elastic
+
+  provision-kibana:
+    image: endeveit/docker-jq
+    command:
+    - ./provision.sh
+    volumes:
+    - $PWD/docker/kibana:/opt/kibana:ro
+    - $PWD/docker/compose/kibana.sh:/provision.sh:ro
+    depends_on:
+    - elastic
+    - kibana
+    restart: "no"
+
+volumes:
+  primary-db:
+  primary-configdb:
+  fallback-db:
+  fallback-configdb:
+  secondary-db:
+  secondary-configdb:
+  solo-db:
+  solo-configdb:
+  elastic-data:

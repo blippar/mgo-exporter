@@ -1,0 +1,10 @@
+{
+    "title": "Metrics - MongoDB ReplicaSet",
+    "visState": "{\"title\":\"Metrics - MongoDB ReplicaSet\",\"type\":\"metric\",\"params\":{\"handleNoResults\":true,\"fontSize\":\"48\"},\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"top_hits\",\"schema\":\"metric\",\"params\":{\"field\":\"mongo.replSet\",\"aggregate\":\"concat\",\"size\":1,\"sortField\":\"time\",\"sortOrder\":\"desc\",\"customLabel\":\"replicaSet\"}}],\"listeners\":{}}",
+    "uiStateJSON": "{}",
+    "description": "",
+    "version": 1,
+    "kibanaSavedObjectMeta": {
+      "searchSourceJSON": "{\"index\":\"mgo-exporter-*\",\"query\":{\"query_string\":{\"query\":\"_type:serverStatus\",\"analyze_wildcard\":true}},\"filter\":[]}"
+    }
+  }

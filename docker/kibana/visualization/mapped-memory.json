@@ -1,0 +1,10 @@
+{
+  "title": "Line - MongoDB Mapped Memory per Host",
+  "visState": "{\"title\":\"Line - MongoDB Mapped Memory per Host\",\"type\":\"metrics\",\"params\":{\"id\":\"c1ad26b0-5814-11e7-884c-7798819d69b6\",\"type\":\"timeseries\",\"series\":[{\"id\":\"d51f6180-5824-11e7-b29c-c960b3acd9ad\",\"color\":\"#68BC00\",\"split_mode\":\"terms\",\"metrics\":[{\"id\":\"d51f6181-5824-11e7-b29c-c960b3acd9ad\",\"type\":\"max\",\"field\":\"serverStatus.mem.mapped\"}],\"seperate_axis\":0,\"axis_position\":\"right\",\"formatter\":\"number\",\"chart_type\":\"line\",\"line_width\":\"1.5\",\"point_size\":\"0\",\"fill\":\"0\",\"stacked\":\"none\",\"label\":\"Resident Memory\",\"terms_field\":\"mongo.host\",\"split_color_mode\":\"rainbow\",\"value_template\":\"{{value}}MB\",\"steps\":0,\"terms_order_by\":\"_count\"}],\"time_field\":\"time\",\"index_pattern\":\"mgo-exporter-*\",\"interval\":\"auto\",\"axis_position\":\"left\",\"axis_formatter\":\"number\",\"show_legend\":1,\"filter\":\"_type:serverStatus\"},\"aggs\":[],\"listeners\":{}}",
+  "uiStateJSON": "{}",
+  "description": "",
+  "version": 1,
+  "kibanaSavedObjectMeta": {
+    "searchSourceJSON": "{\"query\":{\"query_string\":{\"query\":\"*\"}},\"filter\":[]}"
+  }
+}
