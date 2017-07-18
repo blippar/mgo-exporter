@@ -1,16 +1,34 @@
 #!/bin/sh
 set -e
 
+##
+## Configuration
+##
+
+IMPORT_NAME="MgoTest"
 ES_HOST="http://elastic:9200"
 KIBANA_INDEX=".kibana"
-
 INDEX_PATTERN="mgo-exporter-*"
+
+##
+## Internal Configuration
+##
+
 TIME_FIELD="time"
 FIELDS_FILE="index-pattern/mgo-exporter.json"
 FORMAT_FILE="field-format/mgo-exporter.json"
 MAKE_DEFAULT="true"
 VISU_FOLDER="visualization"
 DASH_FOLDER="dashboard"
+
+##
+## Global variables
+##
+
+IMPORT_ID=$(echo "${IMPORT_NAME}" | tr ' ' '-' | tr 'A-Z' 'a-z')
+SED_INDEX_PATTERN="s/mgo-exporter-\*/${INDEX_PATTERN}/g"
+SED_VISU_ID="s/(\\\\\"id\\\\\":\\\\\"mgo-)exporter(-[a-z-]+\\\\\")/\1${IMPORT_ID}\2/g"
+SED_VISU_TITLE="s/MgoExporter -/${IMPORT_NAME} -/g"
 
 importIndexPattern () {
 
@@ -49,8 +67,8 @@ importIndexPattern () {
 importVisualization() {
 
     for v in ${VISU_FOLDER}/*.json; do
-        vis_name="mgo-exporter-$(basename "${v}" '.json')"
-        vis_data="$(cat "${v}")"
+        vis_name="mgo-${IMPORT_ID}-$(basename "${v}" '.json')"
+        vis_data="$(cat "${v}" | sed -E "${SED_INDEX_PATTERN};${SED_VISU_TITLE}")"
         echo "> Importing visualization ${vis_name}"
         curl -sS -X POST "${ES_HOST}/${KIBANA_INDEX}/visualization/${vis_name}?pretty" -d "${vis_data}"
     done
@@ -59,8 +77,8 @@ importVisualization() {
 importDashboard () {
 
     for d in ${DASH_FOLDER}/*; do
-        dash_name="mgo-exporter-$(basename "${d}" '.json')"
-        dash_data="$(cat "${d}")"
+        dash_name="mgo-${IMPORT_ID}-$(basename "${d}" '.json')"
+        dash_data="$(cat "${d}" | sed -E "${SED_VISU_ID};${SED_VISU_TITLE}")"
         echo "> Importing dashboard ${dash_name}"
         curl -sS -X POST "${ES_HOST}/${KIBANA_INDEX}/dashboard/${dash_name}?pretty" -d "${dash_data}"
     done

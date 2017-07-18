@@ -1,6 +1,6 @@
 {
-    "title": "Metrics - MongoDB ReplicaSet",
-    "visState": "{\"title\":\"Metrics - MongoDB ReplicaSet\",\"type\":\"metric\",\"params\":{\"handleNoResults\":true,\"fontSize\":\"48\"},\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"top_hits\",\"schema\":\"metric\",\"params\":{\"field\":\"mongo.replSet\",\"aggregate\":\"concat\",\"size\":1,\"sortField\":\"time\",\"sortOrder\":\"desc\",\"customLabel\":\"replicaSet\"}}],\"listeners\":{}}",
+    "title": "MgoExporter - MongoDB ReplicaSet",
+    "visState": "{\"title\":\"MgoExporter - MongoDB ReplicaSet\",\"type\":\"metric\",\"params\":{\"handleNoResults\":true,\"fontSize\":\"48\"},\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"top_hits\",\"schema\":\"metric\",\"params\":{\"field\":\"mongo.replSet\",\"aggregate\":\"concat\",\"size\":1,\"sortField\":\"time\",\"sortOrder\":\"desc\",\"customLabel\":\"replicaSet\"}}],\"listeners\":{}}",
     "uiStateJSON": "{}",
     "description": "",
     "version": 1,

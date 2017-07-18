@@ -46,9 +46,9 @@ services:
   provision-replicaset:
     image: mongo:3.0
     command:
-    - /provision.sh
+    - /opt/provision/mongodb.sh
     volumes:
-    - $PWD/docker/compose/mongodb.sh:/provision.sh:ro
+    - ./docker/compose:/opt/provision:ro
     depends_on:
     - primary
     - secondary
@@ -68,7 +68,7 @@ services:
       - primary:27017
       - test
       - collection
-    restart: always
+    restart: on-failure
     depends_on:
     - logstash
     - primary
@@ -84,7 +84,7 @@ services:
       - fallback:27017
       - test
       - collection
-    restart: always
+    restart: on-failure
     depends_on:
     - logstash
     - fallback
@@ -100,7 +100,7 @@ services:
       - secondary:27017
       - test
       - collection
-    restart: always
+    restart: on-failure
     depends_on:
     - logstash
     - secondary
@@ -124,7 +124,7 @@ services:
     - -f
     - /usr/share/logstash/config/config.conf
     volumes:
-    - $PWD/docker/logstash:/usr/share/logstash/config:ro
+    - ./docker/logstash:/usr/share/logstash/config:ro
     ports:
     - "2000:2000"
     depends_on:
@@ -142,10 +142,10 @@ services:
   provision-kibana:
     image: endeveit/docker-jq
     command:
-    - ./provision.sh
+    - /opt/provision/kibana.sh
     volumes:
-    - $PWD/docker/kibana:/opt/kibana:ro
-    - $PWD/docker/compose/kibana.sh:/provision.sh:ro
+    - ./docker/kibana:/opt/kibana:ro
+    - ./docker/compose:/opt/provision:ro
     depends_on:
     - elastic
     - kibana
