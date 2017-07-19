@@ -1,6 +1,7 @@
 # Default config
 VERSION   = 0.1.1
 VERBOSE   ?= false
+DISTFOLDER= dist
 
 # Go configuration
 GOBIN	  := $(shell which go)
@@ -11,10 +12,17 @@ GOOPT     ?=
 FPMBIN    := $(shell which fpm)
 FPMFLAGS  ?=
 
+# Docker configuration
+DOCKBIN   := $(shell which docker)
+DOCKIMG   := blippar/mgo-exporter
+DOCKOPTS  ?=
+
 # If run as 'make VERBOSE=true', it will pass th '-v' option to GOBIN
 ifeq ($(VERBOSE),true)
 GOOPT     += -v
 FPMFLAGS  += --verbose
+else
+DOCKOPTS  += -q
 endif
 
 # Binary targets configuration
@@ -23,8 +31,8 @@ TARGETS     := $(EXPORTER_BIN)
 GOPKGDIR     = $(@:bin/%=./cmd/%)
 
 # Package targets configuration
-DEBPKG	   = dist/mgo-export_$(VERSION).x86_64.deb
-RPMPKG	   = dist/mgo-export_$(VERSION).x86_64.rpm
+DEBPKG	   = $(DISTFOLDER)/mgo-exporter_$(VERSION).amd64.deb
+RPMPKG	   = $(DISTFOLDER)/mgo-exporter_$(VERSION).x86_64.rpm
 FPMPKGS    = $(DEBPKG) $(RPMPKG)
 
 # Create FPMFLAGS and FPMFILES from config
@@ -56,16 +64,30 @@ static: GOENV += CGO_ENABLED=0 GOOS=linux
 static: $(TARGETS)
 
 # Packaging
-rpm: FPMFLAGS += -t rpm -s dir -p dist/NAME_VERSION.ARCH.rpm -a x86_64 --rpm-os linux
+rpm: FPMFLAGS += -t rpm -s dir -p $(DISTFOLDER)/NAME_VERSION.ARCH.rpm -a x86_64 --rpm-os linux
 rpm: $(RPMPKG)
-deb: FPMFLAGS += -t deb -s dir -p dist/NAME_VERSION.ARCH.deb -a x86_64
+deb: FPMFLAGS += -t deb -s dir -p $(DISTFOLDER)/NAME_VERSION.ARCH.deb -a x86_64
 deb: $(DEBPKG)
 
 $(FPMPKGS): static
-	$(info >>> Building package $@ using fpm)
-	mkdir -p dist
+	$(info >>> Building package $@ using $(FPMBIN))
+	mkdir -p $(DISTFOLDER)
 	$(FPMBIN) $(FPMFLAGS) $(FPMFILES)
+
+# Docker
+docker:
+	$(info >>> Building docker image $(DOCKIMG) using $(DOCKBIN))
+	$(DOCKBIN) build $(DOCKOPTS) -t $(DOCKIMG):$(VERSION) -t $(DOCKIMG):latest .
+
+# Distribuables
+dist: rpm deb docker
+
+# Clean
+clean:
+	$(info >>> Cleaning up binaries and distribuables)
+	rm -rv $(FPMPKGS) $(TARGETS)
 
 # Always execute these targets
 .PHONY: all $(TARGETS) $(FPMPKGS)
-.PHONY: exporter static rpm deb test
+.PHONY: exporter test
+.PHONY: static rpm deb docker

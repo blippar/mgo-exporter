@@ -14,7 +14,7 @@ if curl -sS --fail "http://elastic:9200/_cat/health" >/dev/null 2>/dev/null; the
 
     echo "> Starting index-patterns and visualizations imports"
     cd /opt/kibana
-    /opt/kibana/import.sh
+    /opt/kibana/import.sh -imvd -e "http://elastic:9200" MgoTest
 
 else
     echo "> Kibana index already exists, skipping provisionning"
