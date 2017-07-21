@@ -100,22 +100,20 @@ init_global () {
 }
 
 usage () {
-    echo "Usage: $0 [OPTIONS] IMPORT_NAME" 1>&2
+    echo "Usage: $0 [-i [-m]] [-v] [-d] [-p INDEX_PATTERN] [-e ES_HOST] [-k KIBANA_INDEX] IMPORT_NAME" 1>&2
     echo 1>&2
-    echo "Argument and Options:" 1>&2
-    echo "    IMPORT_NAME            name to use to prefix visu titles and generate ids" 1>&2
-    echo "    -i                     create index pattern before importing visu" 1>&2
-    echo "    -m                     make new index pattern the default one after" 1>&2
-    echo "                             creating it" 1>&2
-    echo "    -v                     import visualizations" 1>&2
-    echo "    -d                     import dashboards" 1>&2
-    echo "    -p INDEX_PATTERN       use INDEX_PATTERN while importing" 1>&2
-    echo "                             [default: 'mgo-exporter-*']" 1>&2
-    echo "    -e ES_HOST             Elastic search host to connect to while importing" 1>&2
-    echo "                             [default: 'http://127.0.0.1:9200']" 1>&2
-    echo "    -k KIBANA_INDEX        Index to use while create index-pattern and visu" 1>&2
-    echo "                             [default: '.kibana']" 1>&2
-    echo "    -h                     print this help and exit" 1>&2
+    echo "Positional arguments:" 1>&2
+    echo "  IMPORT_NAME            name to use to prefix visu titles and generate ids" 1>&2
+    echo 1>&2
+    echo "Options:" 1>&2
+    echo "  -i                     create index pattern before importing visu" 1>&2
+    echo "  -m                     make new index pattern the default one after creating it" 1>&2
+    echo "  -v                     import visualizations" 1>&2
+    echo "  -d                     import dashboards" 1>&2
+    echo "  -p INDEX_PATTERN       use INDEX_PATTERN while importing [default: 'mgo-exporter-*']" 1>&2
+    echo "  -e ES_HOST             Elastic search host to connect to while importing [default: 'http://127.0.0.1:9200']" 1>&2
+    echo "  -k KIBANA_INDEX        Index to use while create index-pattern and visu [default: '.kibana']" 1>&2
+    echo "  -h                     print this help and exit" 1>&2
 }
 
 main () {

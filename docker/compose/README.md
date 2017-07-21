@@ -1,27 +1,29 @@
-# Emulate replicaLag
+# Docker Compose Test Stack
+## Testing
+#### Emulate replicaLag
 
-- Lock Secondary
+1. Lock Secondary
 ```sh
 docker-compose exec secondary mongo --quiet --eval '
     printjson(db.fsyncLock())
 '
 ```
 
-- Insert on Primary
+2. Insert on Primary
 ```sh
 docker-compose exec primary mongo --quiet --eval '
     printjson(db.collection.insert({item: "Beer", qty: 25}))
 '
 ```
 
-- Unlock Secondary
+3. Unlock Secondary
 ```sh
 docker-compose exec secondary mongo --quiet --eval '
     printjson(db.fsyncUnlock())
 '
 ```
 
-- Print replicaSet secondary lag
+4. Print replicaSet secondary lag
 ```sh
 docker-compose exec primary mongo --quiet --eval '
     rs.printSlaveReplicationInfo()

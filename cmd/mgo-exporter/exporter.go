@@ -22,14 +22,15 @@ import (
 const (
 	// defaultForwarderURI = "logstash://127.0.0.1:2000"
 	defaultForwarderURI = "file:///dev/stdout?pretty"
+	defaultLogFile      = "/dev/stderr"
 )
 
 type cliArgs struct {
 	MongoDB   string   `arg:"positional,help:Mongo URI for the node to connect to"`
 	Database  []string `arg:"positional,separate,help:database name to monitor"`
-	Repl      string   `arg:"-r,help:replicaSet name to monitor,env:MGOEXPORT_REPL"`
-	Forwarder string   `arg:"-f,help:forwarder URI to send messages to,env:MGOEXPORT_FORWARDER"`
-	Logfile   string   `arg:"-l,help:file to output logs to [stderr if not set],env:MGOEXPORT_LOGFILE"`
+	Repl      string   `arg:"-r,help:replicaSet name to monitor [env: MGOEXPORT_REPL],env:MGOEXPORT_REPL"`
+	Forwarder string   `arg:"-f,help:forwarder URI to send messages to [env: MGOEXPORT_FORWARDER],env:MGOEXPORT_FORWARDER"`
+	Logfile   string   `arg:"-l,help:file to output logs to [env: MGOEXPORT_LOGFILE],env:MGOEXPORT_LOGFILE"`
 	Verbose   bool     `arg:"-v,help:enable a more verbose logging"`
 	Quiet     bool     `arg:"-q,help:enable quieter logging"`
 }
@@ -38,11 +39,12 @@ func main() {
 
 	args := &cliArgs{
 		Forwarder: defaultForwarderURI,
+		Logfile:   defaultLogFile,
 	}
 	arg.MustParse(args)
 
 	// Init Logger
-	if args.Logfile != "" {
+	if args.Logfile != defaultLogFile {
 		f, err := os.OpenFile(args.Logfile, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 		if err != nil {
 			log.WithError(err).

@@ -1,0 +1,18 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "type": "object",
+    "properties": {
+        "connected": {
+            "type": "boolean"
+        },
+        "error": {
+            "type": "string"
+        },
+        "host": {
+            "type": "string"
+        },
+        "replSet": {
+            "type": "string"
+        }
+    }
+}

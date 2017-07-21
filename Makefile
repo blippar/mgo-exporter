@@ -82,6 +82,11 @@ docker:
 # Distribuables
 dist: rpm deb docker
 
+# JSON-Schema generation
+generate_schemas: ./scripts/generate_schemas.go
+	$(info >>> Generating JSON-Schema from Go sources using $?)
+	$(GOBIN) run $?
+
 # Clean
 clean:
 	$(info >>> Cleaning up binaries and distribuables)

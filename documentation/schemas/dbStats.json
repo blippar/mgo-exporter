@@ -1,0 +1,42 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "type": "object",
+    "properties": {
+        "avgObjSize": {
+            "type": "integer"
+        },
+        "collections": {
+            "type": "integer"
+        },
+        "dataSize": {
+            "type": "integer"
+        },
+        "db": {
+            "type": "string"
+        },
+        "error": {
+            "type": "string"
+        },
+        "fileSize": {
+            "type": "integer"
+        },
+        "indexSize": {
+            "type": "integer"
+        },
+        "indexes": {
+            "type": "integer"
+        },
+        "numExtents": {
+            "type": "integer"
+        },
+        "objects": {
+            "type": "integer"
+        },
+        "ok": {
+            "type": "integer"
+        },
+        "storageSize": {
+            "type": "integer"
+        }
+    }
+}

@@ -1,0 +1,329 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "type": "object",
+    "properties": {
+        "dbStats": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "avgObjSize": {
+                        "type": "integer"
+                    },
+                    "collections": {
+                        "type": "integer"
+                    },
+                    "dataSize": {
+                        "type": "integer"
+                    },
+                    "db": {
+                        "type": "string"
+                    },
+                    "error": {
+                        "type": "string"
+                    },
+                    "fileSize": {
+                        "type": "integer"
+                    },
+                    "indexSize": {
+                        "type": "integer"
+                    },
+                    "indexes": {
+                        "type": "integer"
+                    },
+                    "numExtents": {
+                        "type": "integer"
+                    },
+                    "objects": {
+                        "type": "integer"
+                    },
+                    "ok": {
+                        "type": "integer"
+                    },
+                    "storageSize": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "mongo": {
+            "type": "object",
+            "properties": {
+                "connected": {
+                    "type": "boolean"
+                },
+                "error": {
+                    "type": "string"
+                },
+                "host": {
+                    "type": "string"
+                },
+                "replSet": {
+                    "type": "string"
+                }
+            }
+        },
+        "nodeReplInfo": {
+            "type": "object",
+            "properties": {
+                "configVersion": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "optime": {
+                    "type": "integer"
+                },
+                "optimeDate": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "optimeDiff": {
+                    "type": "object",
+                    "properties": {
+                        ".*": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "optimeLag": {
+                    "type": "integer"
+                },
+                "set": {
+                    "type": "string"
+                },
+                "state": {
+                    "type": "integer"
+                },
+                "stateStr": {
+                    "type": "string"
+                },
+                "uptime": {
+                    "type": "integer"
+                }
+            }
+        },
+        "replStatus": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "error": {
+                    "type": "string"
+                },
+                "members": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "myState": {
+                    "type": "integer"
+                },
+                "ok": {
+                    "type": "integer"
+                },
+                "set": {
+                    "type": "string"
+                },
+                "syncingTo": {
+                    "type": "string"
+                }
+            }
+        },
+        "serverStatus": {
+            "type": "object",
+            "properties": {
+                "asserts": {
+                    "type": "object",
+                    "properties": {
+                        "msg": {
+                            "type": "integer"
+                        },
+                        "regular": {
+                            "type": "integer"
+                        },
+                        "rollovers": {
+                            "type": "integer"
+                        },
+                        "user": {
+                            "type": "integer"
+                        },
+                        "warning": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "connections": {
+                    "type": "object",
+                    "properties": {
+                        "available": {
+                            "type": "integer"
+                        },
+                        "current": {
+                            "type": "integer"
+                        },
+                        "totalCreated": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "error": {
+                    "type": "string"
+                },
+                "globalLock": {
+                    "type": "object",
+                    "properties": {
+                        "activeClients": {
+                            "type": "object",
+                            "properties": {
+                                "readers": {
+                                    "type": "integer"
+                                },
+                                "total": {
+                                    "type": "integer"
+                                },
+                                "writers": {
+                                    "type": "integer"
+                                }
+                            }
+                        },
+                        "currentQueue": {
+                            "type": "object",
+                            "properties": {
+                                "readers": {
+                                    "type": "integer"
+                                },
+                                "total": {
+                                    "type": "integer"
+                                },
+                                "writers": {
+                                    "type": "integer"
+                                }
+                            }
+                        },
+                        "totalTime": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "host": {
+                    "type": "string"
+                },
+                "localTime": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "mem": {
+                    "type": "object",
+                    "properties": {
+                        "bits": {
+                            "type": "integer"
+                        },
+                        "mapped": {
+                            "type": "integer"
+                        },
+                        "mappedWithJournal": {
+                            "type": "integer"
+                        },
+                        "resident": {
+                            "type": "integer"
+                        },
+                        "supported": {
+                            "type": "integer"
+                        },
+                        "virtual": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "network": {
+                    "type": "object",
+                    "properties": {
+                        "bytesIn": {
+                            "type": "integer"
+                        },
+                        "bytesOut": {
+                            "type": "integer"
+                        },
+                        "numRequests": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "ok": {
+                    "type": "integer"
+                },
+                "opcounters": {
+                    "type": "object",
+                    "properties": {
+                        "command": {
+                            "type": "integer"
+                        },
+                        "delete": {
+                            "type": "integer"
+                        },
+                        "getmore": {
+                            "type": "integer"
+                        },
+                        "insert": {
+                            "type": "integer"
+                        },
+                        "query": {
+                            "type": "integer"
+                        },
+                        "update": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "opcountersRepl": {
+                    "type": "object",
+                    "properties": {
+                        "command": {
+                            "type": "integer"
+                        },
+                        "delete": {
+                            "type": "integer"
+                        },
+                        "getmore": {
+                            "type": "integer"
+                        },
+                        "insert": {
+                            "type": "integer"
+                        },
+                        "query": {
+                            "type": "integer"
+                        },
+                        "update": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "pid": {
+                    "type": "integer"
+                },
+                "process": {
+                    "type": "string"
+                },
+                "uptime": {
+                    "type": "integer"
+                },
+                "uptimeEstimate": {
+                    "type": "integer"
+                },
+                "uptimeMillis": {
+                    "type": "integer"
+                },
+                "version": {
+                    "type": "string"
+                }
+            }
+        },
+        "time": {
+            "type": "string",
+            "format": "date-time"
+        }
+    }
+}

@@ -1,0 +1,58 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "type": "object",
+    "properties": {
+        "_id": {
+            "type": "integer"
+        },
+        "configVersion": {
+            "type": "integer"
+        },
+        "electionDate": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "electionTime": {
+            "type": "integer"
+        },
+        "health": {
+            "type": "integer"
+        },
+        "lastHeartbeat": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "lastHeartbeatMessage": {
+            "type": "string"
+        },
+        "lastHeartbeatRecv": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "name": {
+            "type": "string"
+        },
+        "optime": {
+            "type": "integer"
+        },
+        "optimeDate": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "pingMs": {
+            "type": "integer"
+        },
+        "self": {
+            "type": "boolean"
+        },
+        "state": {
+            "type": "integer"
+        },
+        "stateStr": {
+            "type": "string"
+        },
+        "uptime": {
+            "type": "integer"
+        }
+    }
+}

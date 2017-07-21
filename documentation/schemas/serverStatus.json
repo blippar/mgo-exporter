@@ -1,0 +1,190 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "type": "object",
+    "properties": {
+        "asserts": {
+            "type": "object",
+            "properties": {
+                "msg": {
+                    "type": "integer"
+                },
+                "regular": {
+                    "type": "integer"
+                },
+                "rollovers": {
+                    "type": "integer"
+                },
+                "user": {
+                    "type": "integer"
+                },
+                "warning": {
+                    "type": "integer"
+                }
+            }
+        },
+        "connections": {
+            "type": "object",
+            "properties": {
+                "available": {
+                    "type": "integer"
+                },
+                "current": {
+                    "type": "integer"
+                },
+                "totalCreated": {
+                    "type": "integer"
+                }
+            }
+        },
+        "error": {
+            "type": "string"
+        },
+        "globalLock": {
+            "type": "object",
+            "properties": {
+                "activeClients": {
+                    "type": "object",
+                    "properties": {
+                        "readers": {
+                            "type": "integer"
+                        },
+                        "total": {
+                            "type": "integer"
+                        },
+                        "writers": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "currentQueue": {
+                    "type": "object",
+                    "properties": {
+                        "readers": {
+                            "type": "integer"
+                        },
+                        "total": {
+                            "type": "integer"
+                        },
+                        "writers": {
+                            "type": "integer"
+                        }
+                    }
+                },
+                "totalTime": {
+                    "type": "integer"
+                }
+            }
+        },
+        "host": {
+            "type": "string"
+        },
+        "localTime": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "mem": {
+            "type": "object",
+            "properties": {
+                "bits": {
+                    "type": "integer"
+                },
+                "mapped": {
+                    "type": "integer"
+                },
+                "mappedWithJournal": {
+                    "type": "integer"
+                },
+                "resident": {
+                    "type": "integer"
+                },
+                "supported": {
+                    "type": "integer"
+                },
+                "virtual": {
+                    "type": "integer"
+                }
+            }
+        },
+        "network": {
+            "type": "object",
+            "properties": {
+                "bytesIn": {
+                    "type": "integer"
+                },
+                "bytesOut": {
+                    "type": "integer"
+                },
+                "numRequests": {
+                    "type": "integer"
+                }
+            }
+        },
+        "ok": {
+            "type": "integer"
+        },
+        "opcounters": {
+            "type": "object",
+            "properties": {
+                "command": {
+                    "type": "integer"
+                },
+                "delete": {
+                    "type": "integer"
+                },
+                "getmore": {
+                    "type": "integer"
+                },
+                "insert": {
+                    "type": "integer"
+                },
+                "query": {
+                    "type": "integer"
+                },
+                "update": {
+                    "type": "integer"
+                }
+            }
+        },
+        "opcountersRepl": {
+            "type": "object",
+            "properties": {
+                "command": {
+                    "type": "integer"
+                },
+                "delete": {
+                    "type": "integer"
+                },
+                "getmore": {
+                    "type": "integer"
+                },
+                "insert": {
+                    "type": "integer"
+                },
+                "query": {
+                    "type": "integer"
+                },
+                "update": {
+                    "type": "integer"
+                }
+            }
+        },
+        "pid": {
+            "type": "integer"
+        },
+        "process": {
+            "type": "string"
+        },
+        "uptime": {
+            "type": "integer"
+        },
+        "uptimeEstimate": {
+            "type": "integer"
+        },
+        "uptimeMillis": {
+            "type": "integer"
+        },
+        "version": {
+            "type": "string"
+        }
+    }
+}

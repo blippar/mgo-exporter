@@ -1,0 +1,42 @@
+{
+    "$schema": "http://json-schema.org/schema#",
+    "type": "object",
+    "properties": {
+        "configVersion": {
+            "type": "integer"
+        },
+        "name": {
+            "type": "string"
+        },
+        "optime": {
+            "type": "integer"
+        },
+        "optimeDate": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "optimeDiff": {
+            "type": "object",
+            "properties": {
+                ".*": {
+                    "type": "integer"
+                }
+            }
+        },
+        "optimeLag": {
+            "type": "integer"
+        },
+        "set": {
+            "type": "string"
+        },
+        "state": {
+            "type": "integer"
+        },
+        "stateStr": {
+            "type": "string"
+        },
+        "uptime": {
+            "type": "integer"
+        }
+    }
+}
