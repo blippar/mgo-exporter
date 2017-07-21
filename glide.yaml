@@ -1,8 +1,0 @@
-package: github.com/blippar/mgo-exporter
-import:
-- package: github.com/alexflint/go-arg
-- package: github.com/sirupsen/logrus
-  version: ~1.0.0
-- package: gopkg.in/mgo.v2
-  subpackages:
-  - bson

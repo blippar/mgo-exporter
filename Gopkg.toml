@@ -1,0 +1,11 @@
+[[constraint]]
+  branch = "master"
+  name = "github.com/alexflint/go-arg"
+
+[[constraint]]
+  name = "github.com/sirupsen/logrus"
+  version = "1.0.2"
+
+[[constraint]]
+  branch = "v2"
+  name = "gopkg.in/mgo.v2"
