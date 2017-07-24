@@ -1,12 +1,13 @@
 # Default config
-VERSION   = 0.1.1
+VERSION   ?= $(shell echo `git describe --tag 2>/dev/null || git rev-parse --short HEAD` | sed -E 's|^v||g')
 VERBOSE   ?= false
-DISTFOLDER= dist
+DISTFOLDER = dist
 
 # Go configuration
 GOBIN	  := $(shell which go)
 GOENV	  ?=
 GOOPT     ?=
+GOLDF      = -X main.Version=$(VERSION)
 
 # FPM configuration
 FPMBIN    := $(shell which fpm)
@@ -15,7 +16,7 @@ FPMFLAGS  ?=
 # Docker configuration
 DOCKBIN   := $(shell which docker)
 DOCKIMG   := blippar/mgo-exporter
-DOCKOPTS  ?=
+DOCKOPTS  += --build-arg VERSION="$(VERSION)"
 
 # If run as 'make VERBOSE=true', it will pass th '-v' option to GOBIN
 ifeq ($(VERBOSE),true)
@@ -26,9 +27,9 @@ DOCKOPTS  += -q
 endif
 
 # Binary targets configuration
-EXPORTER_BIN = bin/mgo-exporter
-TARGETS     := $(EXPORTER_BIN)
-GOPKGDIR     = $(@:bin/%=./cmd/%)
+EXPORTERBIN= bin/mgo-exporter
+TARGETS   := $(EXPORTERBIN)
+GOPKGDIR   = $(@:bin/%=./cmd/%)
 
 # Package targets configuration
 DEBPKG	   = $(DISTFOLDER)/mgo-exporter_$(VERSION).amd64.deb
@@ -39,19 +40,19 @@ FPMPKGS    = $(DEBPKG) $(RPMPKG)
 FPMFLAGS  += -n "mgo-exporter" -v $(VERSION) --force \
 	     --config-files /etc/sysconfig/mgo-exporter \
              --post-install packager/postinst.sh --post-uninstall packager/postuninst.sh
-FPMFILES  += $(EXPORTER_BIN)=/usr/bin/ \
+FPMFILES  += $(EXPORTERBIN)=/usr/bin/ \
              packager/sysconfig/mgo-exporter=/etc/sysconfig/ \
 	     packager/systemd/mgo-exporter.service=/usr/lib/systemd/system/
 
 # Local meta targets
 all: $(TARGETS)
-exporter: $(EXPORTER_BIN)
+exporter: $(EXPORTERBIN)
 
 # Build binaries with GOBIN using target name & GOPKGDIR
 $(TARGETS):
 	$(info >>> Building $@ from $(GOPKGDIR) using $(GOBIN))
 	$(if $(GOENV),$(info >>> with $(GOENV) and GOOPT=$(GOOPT)),)
-	$(GOENV) $(GOBIN) build $(GOOPT) -o $@ $(GOPKGDIR)
+	$(GOENV) $(GOBIN) build $(GOOPT) -ldflags '$(GOLDF)' -o $@ $(GOPKGDIR)
 
 # Run tests using GOBIN
 test:
@@ -59,7 +60,7 @@ test:
 	@$(GOBIN) test $(GOOPT) ./...
 
 # Build binaries staticly
-static: GOOPT += -ldflags '-extldflags "-static"'
+static: GOLDF += -extldflags "-static"
 static: GOENV += CGO_ENABLED=0 GOOS=linux
 static: $(TARGETS)
 
@@ -80,6 +81,7 @@ docker:
 	$(DOCKBIN) build $(DOCKOPTS) -t $(DOCKIMG):$(VERSION) -t $(DOCKIMG):latest .
 
 # Distribuables
+dist: DOCKOPTS += --no-cache
 dist: rpm deb docker
 
 # JSON-Schema generation

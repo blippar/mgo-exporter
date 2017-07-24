@@ -6,21 +6,19 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/alexflint/go-arg"
-	// "github.com/apex/log"
-	// "github.com/apex/log/handlers/logfmt"
-	// "github.com/apex/log/handlers/text"
+	arg "github.com/alexflint/go-arg"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/blippar/mgo-exporter/exporter"
 	"github.com/blippar/mgo-exporter/forwarder"
-
 	_ "github.com/blippar/mgo-exporter/forwarder/file"
 	_ "github.com/blippar/mgo-exporter/forwarder/logstash"
 )
 
+// Version is the software version injected at build time
+var Version = "unknown"
+
 const (
-	// defaultForwarderURI = "logstash://127.0.0.1:2000"
 	defaultForwarderURI = "file:///dev/stdout?pretty"
 	defaultLogFile      = "/dev/stderr"
 )
@@ -33,6 +31,10 @@ type cliArgs struct {
 	Logfile   string   `arg:"-l,help:file to output logs to [env: MGOEXPORT_LOGFILE],env:MGOEXPORT_LOGFILE"`
 	Verbose   bool     `arg:"-v,help:enable a more verbose logging"`
 	Quiet     bool     `arg:"-q,help:enable quieter logging"`
+}
+
+func (cliArgs) Version() string {
+	return "mgo-exporter " + Version
 }
 
 func main() {
