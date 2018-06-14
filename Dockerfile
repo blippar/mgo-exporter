@@ -8,8 +8,7 @@ ENV MGOEXPORT_VERSION="$VERSION"
 COPY .  /go/src/github.com/blippar/mgo-exporter
 WORKDIR /go/src/github.com/blippar/mgo-exporter
 
-RUN cd /go/src/github.com/blippar/mgo-exporter \
- && make VERSION="${MGOEXPORT_VERSION}" static
+RUN make VERSION="${MGOEXPORT_VERSION}" static
 
 FROM scratch AS runtime
 

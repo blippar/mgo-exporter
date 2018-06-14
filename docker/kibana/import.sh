@@ -148,6 +148,7 @@ main () {
         return 0
     elif [ "${IMPORT_NAME}" = "" ]; then
         echo "$0: required argument not found -- IMPORT_NAME" 1>&2
+	return 1
     fi
 
     ## Generate import id and patterns

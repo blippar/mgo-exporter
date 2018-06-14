@@ -48,11 +48,6 @@ func (f *TCPForwarder) Send(m interface{}) error {
 		if err == nil {
 			break
 		}
-		// if os.Getenv("RETRY_SEND") == "" {
-		// 	log.Fatal("logstash: could not write:", err)
-		// } else {
-		// 	time.Sleep(2 * time.Second)
-		// }
 		return err
 	}
 	return nil

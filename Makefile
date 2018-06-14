@@ -4,8 +4,8 @@ VERBOSE   ?= false
 DISTFOLDER = dist
 
 # Go configuration
-GOBIN	  := $(shell which go)
-GOENV	  ?=
+GOBIN     := $(shell which go)
+GOENV     ?=
 GOOPT     ?=
 GOLDF      = -X main.Version=$(VERSION)
 
@@ -18,12 +18,13 @@ DOCKBIN   := $(shell which docker)
 DOCKIMG   := blippar/mgo-exporter
 DOCKOPTS  += --build-arg VERSION="$(VERSION)"
 
-# If run as 'make VERBOSE=true', it will pass th '-v' option to GOBIN
+# If run as 'make VERBOSE=true', it will pass the '-v' option to GOBIN and will restore docker build output
 ifeq ($(VERBOSE),true)
 GOOPT     += -v
 FPMFLAGS  += --verbose
 else
 DOCKOPTS  += -q
+.SILENT:
 endif
 
 # Binary targets configuration
@@ -31,38 +32,44 @@ EXPORTERBIN= bin/mgo-exporter
 TARGETS   := $(EXPORTERBIN)
 GOPKGDIR   = $(@:bin/%=./cmd/%)
 
+# Static binary release configuration
+DISTBIN   := $(DISTFOLDER)/mgo-exporter_$(VERSION).amd64
+
 # Package targets configuration
-DEBPKG	   = $(DISTFOLDER)/mgo-exporter_$(VERSION).amd64.deb
-RPMPKG	   = $(DISTFOLDER)/mgo-exporter_$(VERSION).x86_64.rpm
+DEBPKG     = $(DISTFOLDER)/mgo-exporter_$(VERSION).amd64.deb
+RPMPKG     = $(DISTFOLDER)/mgo-exporter_$(VERSION).x86_64.rpm
 FPMPKGS    = $(DEBPKG) $(RPMPKG)
 
 # Create FPMFLAGS and FPMFILES from config
 FPMFLAGS  += -n "mgo-exporter" -v $(VERSION) --force \
-	     --config-files /etc/sysconfig/mgo-exporter \
+             --config-files /etc/sysconfig/mgo-exporter \
              --post-install packager/postinst.sh --post-uninstall packager/postuninst.sh
 FPMFILES  += $(EXPORTERBIN)=/usr/bin/ \
              packager/sysconfig/mgo-exporter=/etc/sysconfig/ \
-	     packager/systemd/mgo-exporter.service=/usr/lib/systemd/system/
+             packager/systemd/mgo-exporter.service=/usr/lib/systemd/system/
 
 # Local meta targets
 all: $(TARGETS)
 exporter: $(EXPORTERBIN)
 
 # Build binaries with GOBIN using target name & GOPKGDIR
+$(TARGETS): GOOPT += -ldflags '$(GOLDF)'
 $(TARGETS):
 	$(info >>> Building $@ from $(GOPKGDIR) using $(GOBIN))
 	$(if $(GOENV),$(info >>> with $(GOENV) and GOOPT=$(GOOPT)),)
-	$(GOENV) $(GOBIN) build $(GOOPT) -ldflags '$(GOLDF)' -o $@ $(GOPKGDIR)
-
-# Run tests using GOBIN
-test:
-	$(info >>> Testing ./... using $(GOBIN))
-	@$(GOBIN) test $(GOOPT) ./...
+	$(GOENV) $(GOBIN) build $(GOOPT) -o $@ $(GOPKGDIR)
 
 # Build binaries staticly
 static: GOLDF += -extldflags "-static"
 static: GOENV += CGO_ENABLED=0 GOOS=linux
 static: $(TARGETS)
+
+# Run tests using GOBIN
+test: GOPKGLIST = $(shell $(GOBIN) list ./... | grep -v vendor)
+test: GOOPT += -ldflags '$(GOLDF)'
+test:
+	$(info >>> Testing ./... using $(GOBIN))
+	$(GOENV) $(GOBIN) test $(GOOPT) -cover $(GOPKGLIST)
 
 # Packaging
 rpm: FPMFLAGS += -t rpm -s dir -p $(DISTFOLDER)/NAME_VERSION.ARCH.rpm -a x86_64 --rpm-os linux
@@ -82,7 +89,9 @@ docker:
 
 # Distribuables
 dist: DOCKOPTS += --no-cache
-dist: rpm deb docker
+dist: static rpm deb docker
+	$(info >>> Moving $(EXPORTERBIN) to $(DISTBIN))
+	cp $(EXPORTERBIN) $(DISTBIN)
 
 # JSON-Schema generation
 generate_schemas: ./scripts/generate_schemas.go

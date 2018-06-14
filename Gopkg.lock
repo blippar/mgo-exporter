@@ -5,7 +5,7 @@
   branch = "master"
   name = "github.com/alexflint/go-arg"
   packages = ["."]
-  revision = "cef6506c97e5731da728c374ff3523e481026423"
+  revision = "f7c0423bd11ee80ab81d25c6d46f492998af8547"
 
 [[projects]]
   branch = "master"
@@ -16,24 +16,45 @@
 [[projects]]
   name = "github.com/sirupsen/logrus"
   packages = ["."]
-  revision = "a3f95b5c423586578a4e099b11a46c2479628cac"
-  version = "1.0.2"
+  revision = "c155da19408a8799da419ed3eeb0cb5db0ad5dbc"
+  version = "v1.0.5"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/urakozz/go-json-schema-generator"
+  packages = ["."]
+  revision = "645b0ded705ed7cec8c301e3bf11df8a4e544551"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/crypto"
+  packages = ["ssh/terminal"]
+  revision = "37a17fe027db43f76fd88b056ddf588563fc8722"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
-  packages = ["unix"]
-  revision = "7a4fde3fda8ef580a89dbae8138c26041be14299"
+  packages = [
+    "unix",
+    "windows"
+  ]
+  revision = "56ede360ec1c541828fb88741b3f1049406d28f5"
 
 [[projects]]
   branch = "v2"
   name = "gopkg.in/mgo.v2"
-  packages = [".","bson","internal/json","internal/sasl","internal/scram"]
+  packages = [
+    ".",
+    "bson",
+    "internal/json",
+    "internal/sasl",
+    "internal/scram"
+  ]
   revision = "3f83fa5005286a7fe593b055f0d7771a7dce4655"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "a3510d5189f87b5a652ff5c6d6e0c58abeb065bd834d799e465bf679140e352f"
+  inputs-digest = "fe404cad9f5005df5a0e2263eed422699c644bd9520f58a011d8fa220fe371ab"
   solver-name = "gps-cdcl"
   solver-version = 1
