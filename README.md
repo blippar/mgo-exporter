@@ -10,7 +10,7 @@
         <img alt="GoDoc" src="https://godoc.org/github.com/blippar/mgo-exporter?status.svg">
     </a>
     <a href="https://github.com/blippar/mgo-exporter/blob/master/LICENSE">
-       <img alt="License" src="  https://img.shields.io/github/license/blippar/mgo-exporter.svg">
+       <img alt="License" src="https://img.shields.io/github/license/blippar/mgo-exporter.svg">
     </a>
     <a href="https://github.com/blippar/mgo-exporter/releases/latest">
         <img alt="Latest Release" src="https://img.shields.io/github/release/blippar/mgo-exporter.svg">
