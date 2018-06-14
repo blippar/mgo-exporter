@@ -90,7 +90,7 @@ func main() {
 	// Wait & Cleanup
 	select {
 	case <-exporter.Wait():
-		log.WithField("description", "stopped due to a previous error").Info("stopped")
+		log.WithField("description", "stopped due to a previous error").Fatal("stopped")
 	case <-sigs:
 		log.WithField("description", "stopped by signal").Info("stopped")
 		exporter.Stop()

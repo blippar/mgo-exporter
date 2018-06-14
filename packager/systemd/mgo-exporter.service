@@ -6,6 +6,7 @@ Type=simple
 EnvironmentFile=/etc/sysconfig/mgo-exporter
 ExecStart=/usr/bin/mgo-exporter --quiet ${MGOEXPORT_MONGODB} $MGOEXPORT_DATABASES
 Restart=on-failure
+RestartSec=5
 
 [Install]
 WantedBy=default.target
