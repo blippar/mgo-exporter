@@ -1,7 +1,28 @@
 <p align="center">
-<img src="documentation/banner.png"></img>
-<h4 align="center">A simple MongoDB stats exporter with replicaSet support</h3>
+    <img alt="Mgo-Exporter banner, by 0rax" src="documentation/banner.png"></img>
 </p>
+<h4 align="center">A simple MongoDB stats exporter with replicaSet support</h3>
+<p align="center">
+    <a href="https://goreportcard.com/report/github.com/blippar/mgo-exporter">
+        <img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/blippar/mgo-exporter">
+    </a>
+    <a href="https://godoc.org/github.com/blippar/mgo-exporter">
+        <img alt="GoDoc" src="https://godoc.org/github.com/blippar/mgo-exporter?status.svg">
+    </a>
+    <a href="https://github.com/blippar/mgo-exporter/blob/master/LICENSE">
+       <img alt="License" src="  https://img.shields.io/github/license/blippar/mgo-exporter.svg">
+    </a>
+    <a href="https://github.com/blippar/mgo-exporter/releases/latest">
+        <img alt="Latest Release" src="https://img.shields.io/github/release/blippar/mgo-exporter.svg">
+    </a>
+    <a href="https://hub.docker.com/r/blippar/mgo-exporter/">
+        <img alt="Docker Image" src="https://img.shields.io/docker/automated/blippar/mgo-exporter.svg">
+    </a>
+</p>
+
+---
+
+Mgo-exporter is a small **stats & metrics open-source exporter** for MongoDB with **extensible forwarding support** to different data sources (currently supporting forwarding to a file or a TCP Logstash listener).
 
 ## Features
 
@@ -12,7 +33,7 @@
 
 ## Install
 
-Mongo exporter is available in many form for the Linux platform, you can install it via:
+Mgo-exporter is available in many form for the Linux platform, you can install it via:
 
 - **A system package** (deb & rpm) available for download on the [Latest Release Page](https://github.com/blippar/mgo-exporter/releases/latest)
 - **A Docker Container** available on the [DockerHub](https://hub.docker.com/r/blippar/mgo-exporter/)
@@ -171,7 +192,7 @@ Exported fields | Command               | Format      | When
 `time`          | n/a                   | `date-time` | Always
 `mongo`         | n/a                   | [schema][1] | Always
 `serverStatus`  | [`db.serverStatus()`] | [schema][2] | When connected to `MONGODB`
-`[]dbStats`     | [`db.stats()`]        | [schema][3] | When at least one `DATABASE` argument is passed and  
+`[]dbStats`     | [`db.stats()`]        | [schema][3] | When at least one `DATABASE` argument is passed and
 _               | _                     | _           | - with `--repl REPL`: when connected to the primary
 _               | _                     | _           | - without `--repl`: when connected to `MONGODB`
 `replStatus`    | [`rs.Status()`]       | [schema][4] | When connected and run with `--repl REPL`
@@ -194,3 +215,7 @@ Exporter   | Configuration                                | Description
 `logstash` | `logstash://{logstash_addr}:{logstash_port}` | Send exported data to a Logstash TCP endpoint (compatible with `codec=>json`)
 `file`     | `file://{file_path}[?pretty]`                | Store exported data in a logfile defined by `{file_path}`
 _          | _                                            | If `?pretty` is specified, the `json` output will be prettified
+
+## Credits
+
+Thanks to [0rax](http://github.com/0rax) for his work on the logo. This logo is licensed under the [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
